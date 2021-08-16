@@ -1,0 +1,21 @@
+{
+  "name": "fact-finding",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "nuxt",
+    "build": "nuxt build",
+    "start": "nuxt start",
+    "generate": "nuxt generate"
+  },
+  "dependencies": {
+    "core-js": "^3.15.1",
+    "mapbox-gl": "^2.4.0",
+    "nuxt": "^2.15.7",
+    "vue-slider-component": "^3.2.14",
+    "vuetify": "^2.5.5"
+  },
+  "devDependencies": {
+    "@nuxtjs/vuetify": "^1.12.1"
+  }
+}
