@@ -27,7 +27,7 @@
     }
 ```
 
-## GET /records
+## GET /records/{eventId}
 
 - **Description:** List รูปภาพ และคลิป ของเหตุการณ์ ในช่วงเวลาที่กำหนด
 ![image](https://user-images.githubusercontent.com/2979072/129572696-335a4b35-5341-4451-80f9-4229dc0c6fdd.png)
@@ -51,6 +51,10 @@
                 "referenceUrl": "https://twitter.com/MatichonOnline/status/1427240965962559494?s=20",
                 "referenceType": "TWITTER",
                 "tags": ["violence", "capture"],
+                "coordinate": {
+                    "lat": 13.817071220203747,
+                    "lon": 100.55725286333902
+                },
                 "reporter": "User1234",
                 "weight": "5"
             },
@@ -62,6 +66,10 @@
                 "referenceUrl": "",
                 "referenceType": "PRIVATE_REPORT",
                 "tags": ["violence"],
+                "coordinate": {
+                    "lat": 13.764960412221885,
+                    "lon": 100.53882695248423
+                },
                 "reporter": "User1234",
                 "weight": "3"
             }
