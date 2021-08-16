@@ -17,9 +17,15 @@ paths:
       - name: beginDate
         in: query
         description: for filtering list of events that begin after this date
+        schema:
+          type: string
+          format: date-time
       - name: endDate
         in: query
         description: for filtering list of events that end before this date
+        schema:
+          type: string
+          format: date-time
       responses:
         '200': # status code
           description: Array of events
@@ -80,9 +86,9 @@ paths:
                 type: object
                 properties:
                   records:
-                    - type: array
-                    - items: 
-                        "$ref": "#/components/schemas/Record"
+                    type: array
+                    items: 
+                      "$ref": "#/components/schemas/Event"
               example:
                 records:
                   - id: ffbb9836-e788-4ab8-8ecc-f85a88b8f64e
