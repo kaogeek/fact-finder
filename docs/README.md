@@ -1,5 +1,5 @@
 # OpenAPI and Mock Servers
-We utilize [OpenAPI Specification v3.0](https://swagger.io/specification/) and [Prism by Stoplight](https://github.com/stoplightio/prism). These tools allow us to start have contract design as a code, start mock server, and generate beautiful document.
+We utilize [OpenAPI Specification v3.0](https://swagger.io/specification/) and [Prism by Stoplight](https://github.com/stoplightio/prism). These tools help us design API contract as a code, getting mock server running, and generate easy to understand API document.
 
 ## How to start mock server
 1. Install Prism
