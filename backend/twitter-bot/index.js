@@ -4,9 +4,10 @@ const functions = require("firebase-functions");
 // // https://firebase.google.com/docs/functions/write-firebase-functions
 //
 
-exports.helloWorld = functions
+exports.twitterBot = functions
     .region("asia-southeast1")
     .https.onRequest((request, response) => {
+      // Put some logic here
       functions.logger.info("Hello logs!", {structuredData: true});
       response.send("Hello from Firebase!");
     });
