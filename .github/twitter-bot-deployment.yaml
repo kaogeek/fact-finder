@@ -1,0 +1,24 @@
+name: Deploy Twitter Bot
+on:
+  push:
+    branches:
+      - dev
+      - twt-bot-deploy
+jobs:
+  deploy:
+    name: Deploy
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@master
+      - name: Install Dependencies
+        run: npm install
+        working-directory: backend/twitter-bot
+      - name: Deploy to Firebase
+        uses: w9jds/firebase-action@master
+        with:
+          args: deploy --only functions
+        working-directory: backend/twitter-bot
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TWITTER_BOT_TOKEN }}
