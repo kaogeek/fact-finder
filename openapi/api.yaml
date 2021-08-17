@@ -1,111 +1,174 @@
-openapi: "3.0.0"
+openapi: 3.0.0
 info:
-  version: 1.0.0
-  title: Swagger Petstore
-  license:
-    name: MIT
+  title: Fact Finder Mock API
+  description: Mock API for Fact Finder Application
+  version: 0.1.9
 servers:
-  - url: http://petstore.swagger.io/v1
+  - url: http://api.example.com/v1
+    description: Optional server description, e.g. Main (production) server
+  - url: http://staging-api.example.com
+    description: Optional server description, e.g. Internal staging server for testing
 paths:
-  /pets:
+  /events:
     get:
-      summary: List all pets
-      operationId: listPets
-      tags:
-        - pets
+      summary: List of events for dropdown.
+      description: List of events for dropdown...
       parameters:
-        - name: limit
-          in: query
-          description: How many items to return at one time (max 100)
-          required: false
-          schema:
-            type: integer
-            format: int32
+      - name: beginDate
+        in: query
+        description: for filtering list of events that begin after this date
+        schema:
+          type: string
+          format: date-time
+      - name: endDate
+        in: query
+        description: for filtering list of events that end before this date
+        schema:
+          type: string
+          format: date-time
       responses:
-        '200':
-          description: A paged array of pets
-          headers:
-            x-next:
-              description: A link to the next page of responses
-              schema:
-                type: string
-          content:
-            application/json:    
-              schema:
-                $ref: "#/components/schemas/Pets"
-        default:
-          description: unexpected error
+        '200': # status code
+          description: Array of events
           content:
             application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
-    post:
-      summary: Create a pet
-      operationId: createPets
-      tags:
-        - pets
-      responses:
-        '201':
-          description: Null response
-        default:
-          description: unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
-  /pets/{petId}:
+              schema: 
+                type: object
+                properties:
+                  events:
+                    type: array
+                    items: 
+                      "$ref": "#/components/schemas/Event"
+              example:
+                events:
+                  - id: 1
+                    name: ม๊อบทะลุฟ้า 15 สิงหาคม
+                    beginDate: 2019-08-15T07:15:22Z
+                  - id: 2
+                    name: Car Park 16 สิงหาคม
+                    beginDate: 2019-08-16T08:15:22Z
+                    endDate: 2019-08-16T12:15:22Z
+  "/records/{eventId}":
     get:
-      summary: Info for a specific pet
-      operationId: showPetById
-      tags:
-        - pets
+      summary: List of photos and video of specific event.
+      description: List of photos and video of specific event...
       parameters:
-        - name: petId
-          in: path
-          required: true
-          description: The id of the pet to retrieve
-          schema:
-            type: string
+      - name: eventId
+        in: path
+        schema:
+          type: integer
+        required: true
+      - name: beginDate
+        in: query
+        schema:
+          type: string
+          format: date-time
+        # required: true
+        description: for filtering records that begin after this date
+      - name: endDate
+        in: query
+        schema:
+          type: string
+          format: date-time
+        # required: true
+        description: for filtering records that end before this date
+      - name: filterTags
+        in: query
+        schema:
+          type: string
+          format: string_separated_comma
+        description: for filtering records that has certain tags
       responses:
-        '200':
-          description: Expected response to a valid request
+        '200': # status code
+          description: Array of Records
           content:
             application/json:
-              schema:
-                $ref: "#/components/schemas/Pet"
-        default:
-          description: unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
+              schema: 
+                type: object
+                properties:
+                  records:
+                    type: array
+                    items: 
+                      "$ref": "#/components/schemas/Event"
+              example:
+                records:
+                  - id: ffbb9836-e788-4ab8-8ecc-f85a88b8f64e
+                    timestamp: "2021-08-17T03:00:00Z"
+                    mediaUrl: "https://picsum.photos/200/300"
+                    mediaType: "STILL"
+                    referenceUrl: "https://twitter.com/MatichonOnline/status/1427240965962559494?s=20"
+                    referenceType: "TWITTER"
+                    tags: ["VIOLENCE", "CAPTURE"]
+                    coordinate:
+                      - lat: 13.817071220203747
+                        lon: 100.55725286333902
+                    reporter: "User1234"
+                    weight: "5"
+                  - id: "497f6eca-6276-4993-bfeb-53cbbbba6f08"
+                    timestamp: "2021-08-17T03:00:00Z"
+                    mediaUrl: "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+                    mediaType: "VIDEO"
+                    referenceUrl: ""
+                    referenceType: "PRIVATE"
+                    tags: ["VIOLENCE"]
+                    coordinate:
+                      - lat: 13.764960412221885
+                        lon: 100.53882695248423
+                    reporter: "User1234"
+                    weight: "3"
+
 components:
   schemas:
-    Pet:
+    Coordinate:
       type: object
-      required:
-        - id
-        - name
+      properties:
+        lat:
+          type: number
+        lon:
+          type: number
+    Event:
+      type: object
       properties:
         id:
           type: integer
           format: int64
         name:
           type: string
-        tag:
+          example: ม๊อบทะลุฟ้า 15 สิงหาคม
+        beginDate:
           type: string
-    Pets:
-      type: array
-      items:
-        $ref: "#/components/schemas/Pet"
-    Error:
+          format: date-time
+        endDate:
+          type: string
+          format: date-time
+    Record:
       type: object
-      required:
-        - code
-        - message
       properties:
-        code:
+        id:
+          type: string
+          format: uuid
+        timestamp:
+          type: string
+          format: date-time
+        mediaUrl:
+          type: string
+          format: uri
+        mediaType:
+          type: string
+          enum: [STILL, VIDEO]
+        referenceUrl:
+          type: string
+          format: uri
+        referenceType:
+          type: string
+          enum: [TWITTER, PRIVATE]
+        tags:
+          type: array
+          items:
+            type: string
+            enum: [VIOLENCE, CAPTURE, FROM_POLICE, FROM_PROTESTER]
+        coordinate:
+          "$ref": "#/components/schemas/Coordinate"
+        weight:
           type: integer
-          format: int32
-        message:
+        reporter:
           type: string
