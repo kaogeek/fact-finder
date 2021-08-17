@@ -22,9 +22,7 @@ jobs:
         run: npm install
         working-directory: backend/twitter-bot
       - name: Deploy to Firebase
-        uses: lowply/deploy-firebase@v0.0.3
+        run: firebase deploy --only functions
+        working-directory: backend/twitter-bot
         env:
-          FIREBASE_PROJECT: fact-finder-app
-          TARGET_BRANCH: twt-bot-deploy
-          FIREBASE_PROJECT_PATH: backend/twitter-bot
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TWITTER_BOT_TOKEN }}
