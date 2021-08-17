@@ -25,6 +25,6 @@ jobs:
         uses: lowply/deploy-firebase@v0.0.3
         env:
           FIREBASE_PROJECT: fact-finder-app
-          TARGET_BRANCH: dev
+          TARGET_BRANCH: twt-bot-deploy
           FIREBASE_PROJECT_PATH: backend/twitter-bot
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TWITTER_BOT_TOKEN }}
