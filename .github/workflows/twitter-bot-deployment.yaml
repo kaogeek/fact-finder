@@ -2,15 +2,9 @@ on:
   push:
     branches:
       - dev
-      - twt-bot-deploy # remove before merge
-    paths:
-      - backend/twitter-bot
-  pull_request:
-    branches:
-      - dev
-      - twt-bot-deploy # remove before merge
     paths:
       - backend/twitter-bot/**
+
 jobs:
   deploy:
     name: Deploy Twitter Bot
