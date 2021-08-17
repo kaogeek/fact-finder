@@ -51,7 +51,7 @@
                 "referenceUrl": "https://twitter.com/MatichonOnline/status/1427240965962559494?s=20",
                 "referenceType": "TWITTER",
                 "tags": ["violence", "capture"],
-                "coordinate": {
+                "coordinates": {
                     "lat": 13.817071220203747,
                     "lon": 100.55725286333902
                 },
@@ -66,7 +66,7 @@
                 "referenceUrl": "",
                 "referenceType": "PRIVATE_REPORT",
                 "tags": ["violence"],
-                "coordinate": {
+                "coordinates": {
                     "lat": 13.764960412221885,
                     "lon": 100.53882695248423
                 },
