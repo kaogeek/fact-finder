@@ -98,7 +98,7 @@ paths:
                     referenceUrl: "https://twitter.com/MatichonOnline/status/1427240965962559494?s=20"
                     referenceType: "TWITTER"
                     tags: ["VIOLENCE", "CAPTURE"]
-                    coordinate:
+                    coordinates:
                       - lat: 13.817071220203747
                         lon: 100.55725286333902
                     reporter: "User1234"
@@ -110,7 +110,7 @@ paths:
                     referenceUrl: ""
                     referenceType: "PRIVATE"
                     tags: ["VIOLENCE"]
-                    coordinate:
+                    coordinates:
                       - lat: 13.764960412221885
                         lon: 100.53882695248423
                     reporter: "User1234"
@@ -118,7 +118,7 @@ paths:
 
 components:
   schemas:
-    Coordinate:
+    Coordinates:
       type: object
       properties:
         lat:
@@ -166,8 +166,8 @@ components:
           items:
             type: string
             enum: [VIOLENCE, CAPTURE, FROM_POLICE, FROM_PROTESTER]
-        coordinate:
-          "$ref": "#/components/schemas/Coordinate"
+        coordinates:
+          "$ref": "#/components/schemas/Coordinates"
         weight:
           type: integer
         reporter:
