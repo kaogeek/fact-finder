@@ -11,12 +11,24 @@
 ## Fact Finder ทำงานอย่างไร
 ![](./docs/images/feed_system.png)
 ![](./docs/images/display_system.png)
+[ดู Figma Mock UI เต็มๆ ได้ที่นี่](https://t.co/ADv9D8vgmq?amp=1)
+
+## Technology Stack
+- *Frontend*: Nuxt.js
+- *Backend*: (M1) Google Cloud Function, Firebase
 
 ## Milestones
-- [Full Mock UI](https://t.co/ADv9D8vgmq?amp=1)
-- TBD
+### Milestone 1
+- **Deadline:** TBD
+- POC with Twitter Scraper
 
-## How to contribute
+### Milestone 2
+- **Deadline:** TBD
+- Migrate to proper architecture
+- LINE Official Account Feeder System
+- Google Drive Feeder System
+
+## How to contribute ❤️
 ทุกคนที่ช่วยงานล้วนเป็นทีมอาสา เราใช้ GitHub ในการจัดการ และแบ่งงานส่วนต่างๆ 
 
-คุณสามารถเริ่มเป็นทีมอาสาสมัครได้ง่ายๆ โดยการเข้าหน้า [Issue](https://github.com/kaogeek/fact-finder/issues) แล้วก็... *เริ่มลุยได้เลย!*
+คุณสามารถเริ่มเป็นทีมอาสาสมัครได้ง่ายๆ โดยการเข้าหน้า [Issue](https://github.com/kaogeek/fact-finder/issues) แล้วก็... *เริ่มลุยได้เลย!* 💪
