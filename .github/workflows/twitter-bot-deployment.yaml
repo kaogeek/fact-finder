@@ -1,4 +1,3 @@
-name: Deploy Twitter Bot
 on:
   push:
     branches:
@@ -8,7 +7,7 @@ on:
       - backend/twitter-bot
 jobs:
   deploy:
-    name: Deploy
+    name: Deploy Twitter Bot
     needs: build
     runs-on: ubuntu-latest
     steps:
