@@ -103,7 +103,11 @@ dist
 # TernJS port file
 .tern-port
 
+# IDE
 .vscode
 
-# For MacOS
+# MacOS
 .DS_Store
+
+# Firebase cloud function build files
+*/**/functions/lib/

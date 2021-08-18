@@ -1,0 +1,44 @@
+{
+    "data": {
+        "public_metrics": {
+            "retweet_count": 0,
+            "reply_count": 0,
+            "like_count": 0,
+            "quote_count": 0
+        },
+        "text": "@factfinderbot https://t.co/clRmlFkwHt",
+        "author_id": "1007678836589264896",
+        "id": "1427618809838411783",
+        "conversation_id": "1427618809838411783",
+        "referenced_tweets": [
+            {
+                "type": "quoted",
+                "id": "1427616927665455110"
+            }
+        ],
+        "source": "Twitter for iPhone",
+        "lang": "und",
+        "entities": {
+            "mentions": [
+                {
+                    "start": 0,
+                    "end": 14,
+                    "username": "factfinderbot",
+                    "id": "1426892356142342146"
+                }
+            ],
+            "urls": [
+                {
+                    "start": 15,
+                    "end": 38,
+                    "url": "https://t.co/clRmlFkwHt",
+                    "expanded_url": "https://twitter.com/ittipat_tv/status/1427616927665455110",
+                    "display_url": "twitter.com/ittipat_tv/sta…"
+                }
+            ]
+        },
+        "created_at": "2021-08-17T13:10:22.000Z",
+        "in_reply_to_user_id": "1426892356142342146",
+        "possibly_sensitive": false
+    }
+}
