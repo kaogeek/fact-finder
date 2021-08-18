@@ -10,9 +10,11 @@
   },
   "dependencies": {
     "core-js": "^3.15.1",
+    "firebase": "^8.9.1",
     "mapbox-gl": "^2.4.0",
     "nuxt": "^2.15.7",
     "vue-slider-component": "^3.2.14",
+    "vuefire": "^2.2.5",
     "vuetify": "^2.5.5"
   },
   "devDependencies": {

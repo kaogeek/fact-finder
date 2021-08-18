@@ -28,9 +28,9 @@ export default {
         center: [100.53826, 13.764981], // starting position [lng, lat]
         zoom: 15, // starting zoom
       });
-      this.map.on("load", function () {
-        this.map.resize();
-      });
+      const marker1 = new mapboxgl.Marker()
+        .setLngLat([100.53826, 13.764981])
+        .addTo(this.map);
     },
   },
 };

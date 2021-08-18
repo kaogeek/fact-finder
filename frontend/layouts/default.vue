@@ -1,7 +1,7 @@
 <template>
   <v-app>
     <Nuxt />
-    <v-card class="logo" dark>Fact Finder</v-card>
+    <v-card class="logo" dark>Fact Finder (ช่วงพัฒนา)</v-card>
     <!-- <v-main>
         <Nuxt />
     </v-main> -->
@@ -19,11 +19,12 @@ export default {
 </script>
 
 <style>
-/* html, body, #__nuxt, #__layout, #app {
+html, body, #__nuxt, #__layout, #app {
   height: 100%;
-} */
+}
 #app {
   font-family: "Prompt", sans-serif;
+  height: 100%
 }
 .logo {
   position: absolute;
