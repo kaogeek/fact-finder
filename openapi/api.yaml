@@ -31,12 +31,12 @@ paths:
           description: Array of events
           content:
             application/json:
-              schema: 
+              schema:
                 type: object
                 properties:
                   events:
                     type: array
-                    items: 
+                    items:
                       "$ref": "#/components/schemas/Event"
               example:
                 events:
@@ -82,48 +82,118 @@ paths:
           description: Array of Records
           content:
             application/json:
-              schema: 
+              schema:
                 type: object
                 properties:
                   records:
                     type: array
-                    items: 
+                    items:
                       "$ref": "#/components/schemas/Event"
               example:
                 records:
-                  - id: ffbb9836-e788-4ab8-8ecc-f85a88b8f64e
+                  - id: "ffbb9836-e788-4ab8-8ecc-f85a88b8f64e"
                     timestamp: "2021-08-17T03:00:00Z"
+                    timestampSource: "DEFAULT"
                     mediaUrl: "https://picsum.photos/200/300"
-                    mediaType: "STILL"
+                    mediaType: "IMAGE"
                     referenceUrl: "https://twitter.com/MatichonOnline/status/1427240965962559494?s=20"
                     referenceType: "TWITTER"
-                    tags: ["VIOLENCE", "CAPTURE"]
-                    coordinates:
-                      - lat: 13.817071220203747
-                        lon: 100.55725286333902
-                    reporter: "User1234"
+                    tags: [
+                      "@factfinderbot",
+                      "#ม็อบ17สิงหา"
+                    ]
+                    coordinates: {
+                      lat: 13.817071220203747,
+                      lng: 100.55725286333902
+                    }
+                    coordinatesSource: "REPORTER"
+                    reporter:
+                      id: "497f6eca-6276-4993-bfeb-53cbbbba6f08"
+                      displayName: "John Twitter"
+                      platform: "TWITTER"
+                      url: "https://twitter.com/john_twitter"
+                      roles: [ {
+                        id: "497f6eca-6276-4993-bfeb-53cbbbba6f08",
+                        enum: "MEDIA"
+                      } ]
                     weight: "5"
                   - id: "497f6eca-6276-4993-bfeb-53cbbbba6f08"
                     timestamp: "2021-08-17T03:00:00Z"
-                    mediaUrl: "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+                    timestampSource: "EXIF"
+                    mediaUrl: "http://drive.google.com/files/497f6eca-6276-4993-bfeb-53cbbbba6f08"
                     mediaType: "VIDEO"
                     referenceUrl: ""
-                    referenceType: "PRIVATE"
-                    tags: ["VIOLENCE"]
-                    coordinates:
-                      - lat: 13.764960412221885
-                        lon: 100.53882695248423
-                    reporter: "User1234"
+                    referenceType: "GOOGLE_DRIVE"
+                    tags: [
+                      {
+                      id: "497f6eca-6276-4993-bfeb-53cbbbba6f08",
+                      tag: "#ความรุนแรง",
+                      color: "#ff0000",
+                      iconChar: null
+                      },
+                      "#ม็อบ17สิงหา"
+                    ]
+                    coordinates: {
+                      lat: 13.764960412221885,
+                      lng: 100.53882695248423
+                    }
+                    coordiatesSource: "EXIF"
+                    reporter:
+                      id: "497f6eca-6276-4993-bfeb-53cbbbba6f08"
+                      displayName: "John Swagger"
+                      platform: null
+                      url: null
+                      roles: [ {
+                        id: "497f6eca-6276-4993-bfeb-53cbbbba6f08",
+                        enum: "OTHER"
+                      } ]
                     weight: "3"
 
 components:
   schemas:
+    Role:
+      type: object
+      properties:
+        id:
+          type: string
+          enum: [MEDIA, NGO, POLITICIAN, OTHER]
+        name:
+          type: string
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        displayName:
+          type: string
+        platform:
+          type: string
+          enum: [TWITTER, GOOGLE, LINE]
+        url:
+          type: string
+        roles:
+          type: array
+          items:
+            $ref: "#/components/schemas/Role"
+    Tag:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        tag:
+          type: string
+        color:
+          type: string
+        iconChar:
+          type: string
     Coordinates:
       type: object
       properties:
         lat:
           type: number
-        lon:
+        lng:
           type: number
     Event:
       type: object
@@ -149,25 +219,30 @@ components:
         timestamp:
           type: string
           format: date-time
+        timestampSource:
+          type: string
+          enum: [EXIF, REPORTER, DEFAULT]
         mediaUrl:
           type: string
           format: uri
         mediaType:
           type: string
-          enum: [STILL, VIDEO]
+          enum: [IMAGE, VIDEO]
         referenceUrl:
           type: string
           format: uri
         referenceType:
           type: string
-          enum: [TWITTER, PRIVATE]
+          enum: [TWITTER, GOOGLE_DRIVE, LINE, PRIVATE]
         tags:
           type: array
           items:
-            type: string
-            enum: [VIOLENCE, CAPTURE, FROM_POLICE, FROM_PROTESTER]
+            type: object
         coordinates:
-          "$ref": "#/components/schemas/Coordinates"
+          $ref: "#/components/schemas/Coordinates"
+        coordinatesSource:
+          type: string
+          enum: [EXIF, REPORTER, DEFAULT]
         weight:
           type: integer
         reporter:
