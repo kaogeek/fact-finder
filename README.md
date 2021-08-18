@@ -4,7 +4,7 @@
 <tr>
 <td style="border: 0;" style="text-align: center;">
   <a href="https://twitter.com/factfinderbot" target="_blank">
-    <img src="https://pbs.twimg.com/profile_images/1426894389704491009/Jwd8htLk_400x400.jpg" alt="Fact Finder Bot" style="border-radius: 50%; width: 120px;">
+    <img src="https://pbs.twimg.com/profile_images/1426894389704491009/Jwd8htLk_400x400.jpg" alt="Fact Finder Bot" style="border-radius: 50%; width: 120px;" width="120">
   </a>
   <div style="font-size: 14px; margin-top: 10px; text-align: center;">
     <a href="https://twitter.com/factfinderbot" target="_blank">@factfinderbot</a>
