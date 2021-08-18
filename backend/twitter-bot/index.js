@@ -58,8 +58,10 @@ async function saveTweetToDb(tweet) {
 
 // In production, uncomment this to let schedule run.
 // exports.scoutTwitter = functions.pubsub.schedule("0 7 * * *").onRun((context) => {
-exports.scoutTwitter = functions.https.onRequest(async (request, response) => {
-  const lastUpdateTweetId = await admin.firestore().collection('twitterBotConfig').doc("LAST_UPDATE_TWEET_ID").get();
+exports.scoutTwitter = functions
+  .region("asia-southeast1")
+  .https.onRequest(async (request, response) => {
+    const lastUpdateTweetId = await admin.firestore().collection('twitterBotConfig').doc("LAST_UPDATE_TWEET_ID").get();
     const tweets = await TwitterApi.getMentionedTweet(lastUpdateTweetId)
     tweets.map(async (item) => {
       recordTweet = await TwitterApi.getRecordTweetDetails(item)
