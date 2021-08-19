@@ -42,11 +42,57 @@ const saveTweetToDb = async (tweet) => {
   // TODO Save Media files
   // TODO Add necessary data
   // TODO Correct date timestamp
+  
+  const coordinates = {
+    "exif": [],
+    "reporter": [],
+    "source": []
+  };
+
+  const timestamp = {
+    exif: "",
+    reporter: "",
+    source: new Date(tweet.created_at)
+  };
+
+  let tags = []
+  if (tweet.entities.hashtags){
+    tweet.entities.hashtags.forEach((x, i) => {
+      tags.push(`#${x.tag}`)
+    });
+  }
+  if (tweet.entities.mentions){
+    tweet.entities.mentions.forEach((x, i) => {
+      tags.push(`@${x.username}`)
+    });
+  };
+
+  let mediaUrl = "";
+  let mediaType = "";
+
+  if (tweet.entities.urls){
+    for (const x of tweet.entities.urls) {
+      if (x.display_url.split(".")[0] === "pic"){
+        mediaUrl = x.display_url;
+        const medType = x.expanded_url.split("/")[6];
+        mediaType = (medType === "video" ? "VIDEO" :
+                    medType === "photo" ? "IMAGE" : "");
+        break;
+      }
+    }
+  };
+
+
   const recordData = {
+    coordinates: coordinates,
     referenceType: "TWIITER",
     referneceUrl: `https://twitter.com/user/status/${tweet.id}`,
-    timestamp: new Date(tweet.created_at),
+    timestamp: timestamp,
+    tags: tags,
+    mediaUrl: mediaUrl,
+    mediaType: mediaType
   };
+
   const writeResult = await admin
     .firestore()
     .collection("records")
