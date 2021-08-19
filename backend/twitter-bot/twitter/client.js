@@ -1,5 +1,5 @@
 const functions = require("firebase-functions");
-const { httpRequest } = require("./httpRequest");
+const { httpRequest } = require("../httpRequest");
 const { Headers } = require("node-fetch");
 
 const BEARER_TOKEN = functions.config().twitter.twitter_bearer_token;
