@@ -5,6 +5,7 @@
       "private_key": ""
     },
     "upload_folder_id": "10Tqb4HkVjUO6ruyE8qhbrH6pP8JqbGFl",
-    "processed_folder_id": "1KSrbCxb023YG6x353as4qcLZ5WlHZja0"
+    "processed_folder_id": "1KSrbCxb023YG6x353as4qcLZ5WlHZja0",
+    "max_files_size": 150
   }
 }
