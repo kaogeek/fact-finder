@@ -1,0 +1,25 @@
+on:
+  push:
+    branches:
+      - "**"
+      - "!dev"
+      - "!main"
+    paths:
+      - backend/twitter-bot/**
+  pull_request:
+    paths:
+      - backend/twitter-bot/**
+
+jobs:
+  deploy:
+    name: Lint & Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@master
+      - name: Install Dependencies
+        run: npm install
+        working-directory: backend/twitter-bot
+      - name: Lint
+        run: npm run lint
+        working-directory: backend/twitter-bot
