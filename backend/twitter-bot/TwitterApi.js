@@ -48,7 +48,7 @@ exports.getMentionedTweet = async (lastUpdateTweetId) => {
 
   let params = {
       "max_results": 100,
-      "tweet.fields": "conversation_id,referenced_tweets",
+      "tweet.fields": "conversation_id,referenced_tweets,entities",
       "since_id": newest_id,
   }
 

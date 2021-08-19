@@ -38,7 +38,7 @@ function tweetNotExistedInDb(tweet) {
  * Save record tweet to database
  * @param {Tweet} tweet Single Tweet response from Tweet API
  */
-const saveTweetToDb = async (tweet) => {
+const saveTweetToDb = async (tweetMention, tweet) => {
   // TODO Save Media files
   // TODO Add necessary data
   // TODO Correct date timestamp
@@ -55,17 +55,36 @@ const saveTweetToDb = async (tweet) => {
     source: new Date(tweet.created_at)
   };
 
-  let tags = []
+  let tags = [];
+  let hashtags = [];
   if (tweet.entities.hashtags){
-    tweet.entities.hashtags.forEach((x, i) => {
-      tags.push(`#${x.tag}`)
-    });
+    hashtags.push.apply(hashtags, tweet.entities.hashtags)
   }
+  if (tweetMention.entities.hashtags){
+    hashtags.push.apply(hashtags, tweetMention.entities.hashtags)
+  }
+
+  hashtags.forEach((x, i) => {
+    const tag = `#${x.tag}`
+    if (!tags.includes(tag) && x.tag){
+      tags.push(tag)
+    }
+  });
+
+  let mentions = [];
   if (tweet.entities.mentions){
-    tweet.entities.mentions.forEach((x, i) => {
-      tags.push(`@${x.username}`)
-    });
-  };
+    mentions.push.apply(mentions, tweet.entities.mentions)
+  }
+  if (tweetMention.entities.mentions){
+    mentions.push.apply(mentions, tweetMention.entities.mentions)
+  }
+  
+  mentions.forEach((x, i) => {
+    const tag = `#${x.tag}`
+    if (!tags.includes(tag) && x.tag){
+      tags.push(tag)
+    }
+  });
 
   let mediaUrl = "";
   let mediaType = "";
@@ -129,7 +148,7 @@ exports.scoutTwitter = functions
     tweets.map(async (item) => {
       const recordTweet = await TwitterApi.getRecordTweetDetails(item);
       if (recordTweet && shouldSaveTweet(recordTweet)) {
-        await saveTweetToDb(recordTweet);
+        await saveTweetToDb(item, recordTweet);
       }
     });
 
