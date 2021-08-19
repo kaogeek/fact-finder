@@ -1,5 +1,5 @@
 import * as functions from "firebase-functions";
-const firebase = require("firebase-admin");
+import firebase = require("firebase-admin");
 import { TsGooleDrive } from "ts-google-drive";
 import { GOOGLE_DRIVE_API } from "ts-google-drive/build/TsGooleDrive";
 const ExifImage = require("exif").ExifImage;
@@ -16,6 +16,7 @@ const SCHEDULE = "* * * * *";
 const DEFAULT_UPLOAD_FOLDER_ID = "10Tqb4HkVjUO6ruyE8qhbrH6pP8JqbGFl";
 const DEFAULT_PROCESSED_FOLDER_ID = "1KSrbCxb023YG6x353as4qcLZ5WlHZja0";
 const DEFAULT_MAX_FILES_SIZE = 150; // The maximun file count to be processed for each execution
+const DEFAULT_TIME_ZONE = "+07:00"; // Use this timezone if "TimeZoneOffset" does not present in EXIF
 
 // Start writing Firebase Functions
 // https://firebase.google.com/docs/functions/typescript
@@ -37,7 +38,7 @@ function getDriveConfig(): any {
     }
   }
   */
-  return functions.config()["drive"];
+  return functions.config()[!isProduction() ? "dev_drive" : "drive"];
 }
 
 function getDriveServiceAccount(): any {
@@ -68,6 +69,15 @@ function getMaxFilesSize(): number {
   } catch (e) {
     // Return default value if runtime config is not available
     return DEFAULT_MAX_FILES_SIZE;
+  }
+}
+
+function getTimeZone(): string {
+  try {
+    return getDriveConfig()["time_zone"];
+  } catch (e) {
+    // Return default value if runtime config is not available
+    return DEFAULT_TIME_ZONE;
   }
 }
 // === FIREBASE SPECIFIC IMPLEMENTATION ===
@@ -206,17 +216,32 @@ function toDecimalLatLng(degree: any[]): number | null {
   return degree[0] + (degree[1] / 60) + (degree[2] / 3600);
 }
 
-function toDate(exifDate: string): Date | null {
+function toDate(exifDate: string, tzOffset: any): Date | null {
   if (!exifDate) {
     return null;
+  }
+  if (tzOffset === null || tzOffset === undefined) {
+    tzOffset = getTimeZone();
+  } else if (typeof tzOffset === "number") {
+    if (tzOffset === 0) {
+      tzOffset = "Z";
+    } else if (tzOffset > 0) {
+      tzOffset = "+" + tzOffset;
+    } else {
+      tzOffset = "-" + tzOffset;
+    }
+  } else {
+    tzOffset = getTimeZone();
   }
 
   let dateStr: string = exifDate.substring(0, exifDate.indexOf(" ")).trim();
   let timeStr: string = exifDate.substring(exifDate.indexOf(" ") + 1).trim();
 
-  dateStr = dateStr.replace(":", "-");
+  dateStr = dateStr.split(":").join("-");
 
-  return new Date(dateStr + "T" + timeStr);
+  let fullDateStr: string = dateStr + "T" + timeStr + tzOffset;
+
+  return new Date(fullDateStr);
 }
 
 function extractEXIF(buffer: Buffer): Promise<EXIFInfo> {
@@ -232,9 +257,9 @@ function extractEXIF(buffer: Buffer): Promise<EXIFInfo> {
         } else {
           let ts = null;
           // First, we'll use "DateTimeOriginal" tag.
-          ts = !ts && exifData.exif["DateTimeOriginal"] ? toDate(exifData.exif["DateTimeOriginal"].toString()) : ts;
+          ts = !ts && exifData.exif["DateTimeOriginal"] ? toDate(exifData.exif["DateTimeOriginal"].toString(), exifData.exif["TimeZoneOffset"] ? exifData.exif["TimeZoneOffset"][0] : null) : ts;
           // If it is not available, fallback to "CreateDate".
-          ts = !ts && exifData.exif["CreateDate"] ? toDate(exifData.exif["CreateDate"].toString()) : ts;
+          ts = !ts && exifData.exif["CreateDate"] ? toDate(exifData.exif["CreateDate"].toString(), exifData.exif["TimeZoneOffset"] ? exifData.exif["TimeZoneOffset"][0] : null) : ts;
 
           let lat = null;
           let lng = null;
@@ -362,8 +387,6 @@ exports[funcName("scoutGDrive")] = functions.region(REGION).pubsub.schedule(SCHE
     let promises: Promise<any>[] = [];
 
     for (let file of files) {
-      console.log(file);
-
       if (!isSupportFile(file)) {
         // Move it to TRASH !!!
         // Since file type is not supported

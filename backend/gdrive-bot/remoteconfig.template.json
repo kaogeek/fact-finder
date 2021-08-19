@@ -4,8 +4,19 @@
       "client_email": "",
       "private_key": ""
     },
+    "upload_folder_id": "1WgbYlz03qJ2Js3nIvxkwTPWINGoKas2g",
+    "processed_folder_id": "1v_9eD4Tzgzu4i1WuZi330QSWOERm5Omj",
+    "max_files_size": "150",
+    "time_zone": "+07:00"
+  },
+  "dev_drive": {
+    "service_account": {
+      "client_email": "",
+      "private_key": ""
+    },
     "upload_folder_id": "10Tqb4HkVjUO6ruyE8qhbrH6pP8JqbGFl",
     "processed_folder_id": "1KSrbCxb023YG6x353as4qcLZ5WlHZja0",
-    "max_files_size": 150
+    "max_files_size": "150",
+    "time_zone": "+07:00"
   }
 }
