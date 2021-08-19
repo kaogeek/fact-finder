@@ -9,9 +9,9 @@
 ## How to run the project
 1. This project is using `firebase`. So you need to finish initial setup. Please go through this document https://firebase.google.com/docs/functions/get-started
 2. We also use `Cloud Firestore`. So you might want `Emulator` to run your `Cloud Firestore` in your local machine. Please follow this document https://firebase.google.com/docs/emulator-suite/install_and_configure
-3. create configuration file by `cp` from local template and fill necessary value (e.g. `twitter_bearer_token`)
+3. Download configuration file by running:
 ```
-cp local.runtimeconfig.json .runtimeconfig.json
+firebase functions:config:get > .runtimeconfig.json
 ```
 4. After you finish all this initial work, try run below command in this directory
 ```
