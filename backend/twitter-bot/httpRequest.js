@@ -13,9 +13,9 @@ exports.httpRequest = async (urlString, params, requestOptions) => {
     return false;
   }
   const responseJson = await response.json();
-  if (!responseJson.data) {
+  if (!responseJson.data && responseJson.meta.result_count > 0) {
     error(responseJson.title, ":", responseJson.errors[0].message);
     return false;
   }
-  return responseJson.data;
+  return responseJson;
 };

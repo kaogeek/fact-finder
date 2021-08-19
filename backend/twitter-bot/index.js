@@ -59,12 +59,12 @@ const saveTweetToDb = async (tweet) => {
  * for continue query tweet later
  * @param {Tweet} tweet Single Tweet response from Tweet API
  */
-function setLastUpdate(tweet) {
+function setLastUpdate(newest_id) {
   const lastUpdateTweetId = admin
     .firestore()
     .collection("twitterBotConfig")
     .doc("LAST_UPDATE_TWEET_ID");
-  lastUpdateTweetId.set({ id: tweet.id });
+  lastUpdateTweetId.set({ id: newest_id });
 }
 
 // In production, uncomment this to let schedule run.
@@ -77,13 +77,14 @@ exports.scoutTwitter = functions
       .collection("twitterBotConfig")
       .doc("LAST_UPDATE_TWEET_ID")
       .get();
-    const tweets = await TwitterApi.getMentionedTweet(lastUpdateTweetId);
+    const resp = await TwitterApi.getMentionedTweet(lastUpdateTweetId);
+    setLastUpdate(resp.newest_id);
+    const tweets = resp.data;
     tweets.map(async (item) => {
       const recordTweet = await TwitterApi.getRecordTweetDetails(item);
       if (recordTweet && shouldSaveTweet(recordTweet)) {
         await saveTweetToDb(recordTweet);
       }
-      setLastUpdate(item);
     });
 
     const afterUpdateTweetId = await admin
@@ -94,6 +95,6 @@ exports.scoutTwitter = functions
     response.send(
       `Last Update Tweet Id: ${
         afterUpdateTweetId.data() && afterUpdateTweetId.data().id
-      }`
+      }, ${tweets.length} tweets uploaded`
     );
   });

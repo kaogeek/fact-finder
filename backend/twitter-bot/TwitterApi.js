@@ -27,25 +27,58 @@ const ENUM_REPORT_TYPE = {
   REPLY: "REPLY",
 };
 
-var myHeaders = new Headers();
-myHeaders.append("Authorization", `Bearer ${BEARER_TOKEN}`);
-
 // eslint-disable-next-line no-unused-vars
 exports.getMentionedTweet = async (lastUpdateTweetId) => {
   // TODO query by lastUpdateTweetId
   const url = `https://api.twitter.com/2/users/${FACTFINDERBOT_TWITTER_USER_ID}/mentions`;
-  const params = {
-    max_results: 5,
-    "tweet.fields": TWITTER_FIELDS,
-  };
+  var userMentionsTimelineHeader = new Headers();
+  userMentionsTimelineHeader.append("Authorization", `Bearer ${BEARER_TOKEN}`);
+  userMentionsTimelineHeader.append("User-Agent", "v2UserMentionssJS");
+
   const requestOptions = {
     method: "GET",
-    headers: myHeaders,
+    headers: userMentionsTimelineHeader,
     redirect: "follow",
   };
 
-  const data = await httpRequest(url, params, requestOptions);
-  return data || [];
+  let userMentions = [];
+  let hasNextPage = true;
+  let nextToken = null;
+  let newest_id = lastUpdateTweetId.data() ? lastUpdateTweetId.data().id : 0;
+
+  let params = {
+      "max_results": 100,
+      "tweet.fields": "conversation_id,referenced_tweets",
+      "since_id": newest_id,
+  }
+
+  console.log("Retrieving mentions...");
+
+  while (hasNextPage) {
+
+    if (nextToken) {
+      params.pagination_token = nextToken;
+    }
+
+    let resp = await httpRequest(url, params, requestOptions);
+    if (resp && resp.meta && resp.meta.result_count && resp.meta.result_count > 0) {
+      if (resp.data) {
+        userMentions.push.apply(userMentions, resp.data);
+      }
+      if (resp.meta.next_token) {
+        nextToken = resp.meta.next_token;
+      } else {hasNextPage = false;}
+    } else {
+      hasNextPage = false;
+    }
+    if (resp && resp.meta && resp.meta.newest_id && newest_id < resp.meta.newest_id){
+      newest_id = resp.meta.newest_id;
+    }
+
+  }
+
+  console.log(`Got ${userMentions.length} mentions`);
+  return {"data": userMentions, "newest_id": newest_id};
 };
 
 function getReportType(tweet) {
@@ -63,21 +96,22 @@ exports.getRecordTweetDetails = async (tweet) => {
   if (reportType === ENUM_REPORT_TYPE.QUOTE) {
     return await getTweetDetailexports(tweet.referenced_tweets[0].id);
   }
-
   return await getTweetDetailexports(tweet.conversation_id);
 };
 
 async function getTweetDetailexports(twitterId) {
+  var tweetLookUpHeader = new Headers();
+  tweetLookUpHeader.append("Authorization", `Bearer ${BEARER_TOKEN}`);
+  tweetLookUpHeader.append("User-Agent", "v2TweetLookupJS");
   const url = `https://api.twitter.com/2/tweets/${twitterId}`;
   const params = {
     "tweet.fields": TWITTER_FIELDS,
   };
   const requestOptions = {
     method: "GET",
-    headers: myHeaders,
+    headers: tweetLookUpHeader,
     redirect: "follow",
   };
-
-  const data = await httpRequest(url, params, requestOptions);
-  return data || false;
+  const resp = await httpRequest(url, params, requestOptions);
+  return resp.data || false;
 }
