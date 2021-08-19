@@ -92,8 +92,11 @@ paths:
               example:
                 records:
                   - id: "ffbb9836-e788-4ab8-8ecc-f85a88b8f64e"
-                    timestamp: "2021-08-17T03:00:00Z"
-                    timestampSource: "DEFAULT"
+                    timestamp: {
+                      exif: "2021-08-17T03:00:00Z",
+                      reporter: "2021-08-17T03:00:00Z",
+                      source: "2021-08-17T03:00:00Z"
+                    }
                     mediaUrl: "https://picsum.photos/200/300"
                     mediaType: "IMAGE"
                     referenceUrl: "https://twitter.com/MatichonOnline/status/1427240965962559494?s=20"
@@ -103,10 +106,19 @@ paths:
                       "#ม็อบ17สิงหา"
                     ]
                     coordinates: {
-                      lat: 13.817071220203747,
-                      lng: 100.55725286333902
+                      exif: {
+                        lat: 13.817071220203747,
+                        lng: 100.55725286333902
+                      },
+                      reporter: {
+                        lat: 13.817071220203747,
+                        lng: 100.55725286333902
+                      },
+                      source: {
+                        lat: 13.817071220203747,
+                        lng: 100.55725286333902
+                      }
                     }
-                    coordinatesSource: "REPORTER"
                     reporter:
                       id: "497f6eca-6276-4993-bfeb-53cbbbba6f08"
                       displayName: "John Twitter"
@@ -118,8 +130,11 @@ paths:
                       } ]
                     weight: "5"
                   - id: "497f6eca-6276-4993-bfeb-53cbbbba6f08"
-                    timestamp: "2021-08-17T03:00:00Z"
-                    timestampSource: "EXIF"
+                    timestamp: {
+                      exif: "2021-08-17T03:00:00Z",
+                      reporter: "2021-08-17T03:00:00Z",
+                      source: "2021-08-17T03:00:00Z"
+                    }
                     mediaUrl: "http://drive.google.com/files/497f6eca-6276-4993-bfeb-53cbbbba6f08"
                     mediaType: "VIDEO"
                     referenceUrl: ""
@@ -134,10 +149,19 @@ paths:
                       "#ม็อบ17สิงหา"
                     ]
                     coordinates: {
-                      lat: 13.764960412221885,
-                      lng: 100.53882695248423
+                      exif: {
+                        lat: 13.764960412221885,
+                        lng: 100.53882695248423
+                      },
+                      reporter: {
+                        lat: 13.764960412221885,
+                        lng: 100.53882695248423
+                      },
+                      source: {
+                        lat: 13.764960412221885,
+                        lng: 100.53882695248423
+                      }
                     }
-                    coordiatesSource: "EXIF"
                     reporter:
                       id: "497f6eca-6276-4993-bfeb-53cbbbba6f08"
                       displayName: "John Swagger"
@@ -188,13 +212,34 @@ components:
           type: string
         iconChar:
           type: string
-    Coordinates:
+    Geo:
       type: object
       properties:
         lat:
           type: number
         lng:
           type: number
+    Coordinates:
+      type: object
+      properties:
+        exif:
+          $ref: "#/components/schemas/Geo"
+        reporter:
+          $ref: "#/components/schemas/Geo"
+        source:
+          $ref: "#/components/schemas/Geo"
+    Timestamp:
+      type: object
+      properties:
+        exif:
+          type: string
+          format: date-time
+        reporter:
+          type: string
+          format: date-time
+        source:
+          type: string
+          format: date-time
     Event:
       type: object
       properties:
@@ -217,11 +262,7 @@ components:
           type: string
           format: uuid
         timestamp:
-          type: string
-          format: date-time
-        timestampSource:
-          type: string
-          enum: [EXIF, REPORTER, DEFAULT]
+          $ref: "#/components/schemas/Timestamp"
         mediaUrl:
           type: string
           format: uri
@@ -240,9 +281,6 @@ components:
             type: object
         coordinates:
           $ref: "#/components/schemas/Coordinates"
-        coordinatesSource:
-          type: string
-          enum: [EXIF, REPORTER, DEFAULT]
         weight:
           type: integer
         reporter:
