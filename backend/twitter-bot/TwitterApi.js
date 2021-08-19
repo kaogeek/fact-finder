@@ -1,4 +1,4 @@
-const functions = require('firebase-functions');
+const functions = require("firebase-functions");
 const { httpRequest } = require("./httpRequest");
 const { Headers } = require("node-fetch");
 
