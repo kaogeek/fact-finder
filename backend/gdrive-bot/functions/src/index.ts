@@ -1,11 +1,18 @@
 import * as functions from "firebase-functions";
 const firebase = require("firebase-admin");
+import { TsGooleDrive } from "ts-google-drive";
 
 const PROJECT_ID = "fact-finder-app";
 const REGION = "asia-southeast1";
+
+// Schedule configs
 const TZ = "Asia/Bangkok";
 // Run every minute!
 const SCHEDULE = "* * * * *";
+
+// Drive default configs
+const DEFAULT_UPLOAD_FOLDER_ID = "10Tqb4HkVjUO6ruyE8qhbrH6pP8JqbGFl";
+const DEFAULT_PROCESSED_FOLDER_ID = "1KSrbCxb023YG6x353as4qcLZ5WlHZja0";
 
 // Start writing Firebase Functions
 // https://firebase.google.com/docs/functions/typescript
@@ -15,6 +22,42 @@ function isProduction(): boolean {
   return false;
 }
 
+function getDriveConfig(): any {
+  /*
+  {
+    "drive": {
+      "serviceAccount": {
+        ... service-account.json ...
+      },
+      "uploadFolderId": "",
+      "processedFolderId": ""
+    }
+  }
+  */
+  return functions.config()["drive"];
+}
+
+function getDriveServiceAccount(): any {
+  return getDriveConfig()["service_account"];
+}
+
+function getUploadFolderId(): string {
+  try {
+    return getDriveConfig()["upload_folder_id"];
+  } catch (e) {
+    // Return default value if runtime config is not available
+    return DEFAULT_UPLOAD_FOLDER_ID;
+  }
+}
+
+function getProcessedFolderId(): string {
+  try {
+    return getDriveConfig()["processed_folder_id"];
+  } catch (e) {
+    // Return default value if runtime config is not available
+    return DEFAULT_PROCESSED_FOLDER_ID;
+  }
+}
 // === FIREBASE SPECIFIC IMPLEMENTATION ===
 
 // *** *** ***
@@ -54,6 +97,9 @@ function collection(collectionPath: string): any {
 
 // === END of FIREBASE SPECIFIC IMPLEMENTATION ===
 
+// Declare drive instance
+const drive = new TsGooleDrive({credentials: getDriveServiceAccount()});
+
 function createRecord(record: any): Promise<any> {
   return new Promise<any>((resolve, reject) => {
     if (!record) {
@@ -91,5 +137,16 @@ function funcName(name: string): string {
 }
 
 exports[funcName("scoutGDrive")] = functions.region(REGION).pubsub.schedule(SCHEDULE).timeZone(TZ).onRun((context: any) => {
-  return createRecord({ "message": "TEST1234" });
+  const uploadFolder = getUploadFolderId();
+  const processedFolder = getProcessedFolderId();
+
+  return Promise.resolve().then(() => {
+    // First, list files in upload folder.
+    return drive
+      .query()
+      .inFolder(uploadFolder)
+      .run();
+  }).then((files) => {
+    console.log(files);
+  });
 });
