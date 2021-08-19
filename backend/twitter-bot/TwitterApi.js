@@ -1,7 +1,8 @@
+const functions = require('firebase-functions');
 const { httpRequest } = require("./httpRequest");
 const { Headers } = require("node-fetch");
 
-const BEARER_TOKEN = ""; // TODO Move to secret files
+const BEARER_TOKEN = functions.config().twitter.twitter_bearer_token;
 const FACTFINDERBOT_TWITTER_USER_ID = "1426892356142342146";
 const TWITTER_FIELDS =
   "attachments,author_id,conversation_id,geo,created_at,entities,public_metrics,id,in_reply_to_user_id,lang,possibly_sensitive,referenced_tweets,source,text,withheld";
