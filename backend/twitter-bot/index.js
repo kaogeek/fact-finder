@@ -1,11 +1,11 @@
 const functions = require("firebase-functions");
-const TwitterApi = require("./TwitterApi")
+const TwitterApi = require("./TwitterApi");
 
 // // Create and Deploy Your First Cloud Functions
 // // https://firebase.google.com/docs/functions/write-firebase-functions
 //
 
-const admin = require('firebase-admin');
+const admin = require("firebase-admin");
 admin.initializeApp();
 
 /**
@@ -15,7 +15,11 @@ admin.initializeApp();
 function shouldSaveTweet(tweet) {
   const publicMetrics = tweet.public_metrics;
   const haveAttachments = !!tweet.attachments;
-  const highEngagement = publicMetrics.retweet_count > 1000 || publicMetrics.reply_count > 10 || publicMetrics.like_count > 500 || publicMetrics.quote_count > 20;
+  const highEngagement =
+    publicMetrics.retweet_count > 1000 ||
+    publicMetrics.reply_count > 10 ||
+    publicMetrics.like_count > 500 ||
+    publicMetrics.quote_count > 20;
   if (haveAttachments && highEngagement) {
     return tweetNotExistedInDb(tweet);
   }
@@ -23,8 +27,9 @@ function shouldSaveTweet(tweet) {
 
 /**
  * Check whether current tweet already have in db yet?
- * @param {*} tweet 
+ * @param {*} tweet
  */
+// eslint-disable-next-line no-unused-vars
 function tweetNotExistedInDb(tweet) {
   return true; // TODO search firestore by tweet id.
 }
@@ -33,7 +38,7 @@ function tweetNotExistedInDb(tweet) {
  * Save record tweet to database
  * @param {Tweet} tweet Single Tweet response from Tweet API
  */
-async function saveTweetToDb(tweet) {
+const saveTweetToDb = async (tweet) => {
   // TODO Save Media files
   // TODO Add necessary data
   // TODO Correct date timestamp
@@ -41,18 +46,24 @@ async function saveTweetToDb(tweet) {
     referenceType: "TWIITER",
     referneceUrl: `https://twitter.com/user/status/${tweet.id}`,
     timestamp: new Date(tweet.created_at),
-  }
-  const writeResult = await admin.firestore().collection('records').add(recordData);
+  };
+  const writeResult = await admin
+    .firestore()
+    .collection("records")
+    .add(recordData);
   return writeResult;
-}
+};
 
 /**
  * Set Last Update Tweet Id to Firestore Twitter Bot Configuration
  * for continue query tweet later
  * @param {Tweet} tweet Single Tweet response from Tweet API
  */
- function setLastUpdate(tweet) {
-  const lastUpdateTweetId = admin.firestore().collection('twitterBotConfig').doc("LAST_UPDATE_TWEET_ID");
+function setLastUpdate(tweet) {
+  const lastUpdateTweetId = admin
+    .firestore()
+    .collection("twitterBotConfig")
+    .doc("LAST_UPDATE_TWEET_ID");
   lastUpdateTweetId.set({ id: tweet.id });
 }
 
@@ -61,16 +72,28 @@ async function saveTweetToDb(tweet) {
 exports.scoutTwitter = functions
   .region("asia-southeast1")
   .https.onRequest(async (request, response) => {
-    const lastUpdateTweetId = await admin.firestore().collection('twitterBotConfig').doc("LAST_UPDATE_TWEET_ID").get();
-    const tweets = await TwitterApi.getMentionedTweet(lastUpdateTweetId)
+    const lastUpdateTweetId = await admin
+      .firestore()
+      .collection("twitterBotConfig")
+      .doc("LAST_UPDATE_TWEET_ID")
+      .get();
+    const tweets = await TwitterApi.getMentionedTweet(lastUpdateTweetId);
     tweets.map(async (item) => {
-      recordTweet = await TwitterApi.getRecordTweetDetails(item)
+      const recordTweet = await TwitterApi.getRecordTweetDetails(item);
       if (recordTweet && shouldSaveTweet(recordTweet)) {
-        await saveTweetToDb(recordTweet)
+        await saveTweetToDb(recordTweet);
       }
-      setLastUpdate(item)
-    })
+      setLastUpdate(item);
+    });
 
-    const afterUpdateTweetId = await admin.firestore().collection('twitterBotConfig').doc("LAST_UPDATE_TWEET_ID").get();
-    response.send(`Last Update Tweet Id: ${afterUpdateTweetId.data() && afterUpdateTweetId.data().id}`);
-});
+    const afterUpdateTweetId = await admin
+      .firestore()
+      .collection("twitterBotConfig")
+      .doc("LAST_UPDATE_TWEET_ID")
+      .get();
+    response.send(
+      `Last Update Tweet Id: ${
+        afterUpdateTweetId.data() && afterUpdateTweetId.data().id
+      }`
+    );
+  });
