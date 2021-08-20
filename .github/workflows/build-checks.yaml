@@ -1,0 +1,42 @@
+on:
+  push:
+    branches:
+      - "**"
+      - "!dev"
+      - "!main"
+    paths:
+      - backend/twitter-bot/**
+      - backend/gdrive-bot/**
+  pull_request:
+    paths:
+      - backend/twitter-bot/**
+      - backend/gdrive-bot/**
+
+jobs:
+  twt-lint:
+    name: Twitter Bot Lint & Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@master
+      - name: Install Dependencies
+        run: npm install
+        working-directory: backend/twitter-bot
+      - name: Lint
+        run: npm run lint
+        working-directory: backend/twitter-bot
+  gdrive-lint:
+    name: GDrive Bot Lint & Test & Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@master
+      - name: Install Dependencies
+        run: npm install
+        working-directory: backend/gdrive-bot/functions
+      - name: Lint
+        run: npm run lint
+        working-directory: backend/gdrive-bot/functions
+      - name: Build
+        run: npm run build
+        working-directory: backend/gdrive-bot/functions
