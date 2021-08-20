@@ -1,8 +1,7 @@
-const functions = require("firebase-functions");
-const { httpRequest } = require("./httpRequest");
+const { httpRequest } = require("../httpRequest");
 const { Headers } = require("node-fetch");
+const { TWITTER_TOKEN } = require("../config");
 
-const BEARER_TOKEN = functions.config().twitter.twitter_bearer_token;
 const FACTFINDERBOT_TWITTER_USER_ID = "1426892356142342146";
 const TWITTER_FIELDS =
   "attachments,author_id,conversation_id,geo,created_at,entities,public_metrics,id,in_reply_to_user_id,lang,possibly_sensitive,referenced_tweets,source,text,withheld";
@@ -29,7 +28,7 @@ const ENUM_REPORT_TYPE = {
 };
 
 var myHeaders = new Headers();
-myHeaders.append("Authorization", `Bearer ${BEARER_TOKEN}`);
+myHeaders.append("Authorization", `Bearer ${TWITTER_TOKEN}`);
 
 // eslint-disable-next-line no-unused-vars
 exports.getMentionedTweet = async (lastUpdateTweetId) => {
