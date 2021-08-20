@@ -67,15 +67,72 @@ npm install -g firebase-tools
 ```
 *See: https://github.com/firebase/firebase-tools*
 
+#### Install firebase-config-sync
+
+```
+npm install -g firebase-config-sync
+```
+*See: https://www.npmjs.com/package/firebase-config-sync*
+
 #### Install dependencies
 Go to `gdrive-bot/functions` directory then run:
 ```
 npm install
 ```
 
+### Firebase config
+
+#### Syncing config from GCP <a name="config-sync-get"></a>
+Go to `gdrive-bot` directory then run:
+```
+firebase-config-sync get
+```
+After executing this command, the `.runtimeconfig.json` should be created in `gdrive-bot/functions` directory.
+
+#### Edit config locally
+You can edit local config file which is only used in the emulator at `gdrive-bot/functions/.runtimeconfig.json`.
+```json
+{
+  "drive": {    
+    "service_account": {
+      "client_email": "",
+      "private_key": ""
+    },
+    "upload_folder_id": "1WgbYlz03qJ2Js3nIvxkwTPWINGoKas2g",
+    "processed_folder_id": "1v_9eD4Tzgzu4i1WuZi330QSWOERm5Omj",
+    "max_files_size": "150",
+    "time_zone": "+07:00"
+  },
+  "dev_drive": { 
+    "service_account": {
+      "client_email": "",
+      "private_key": ""
+    },
+    "upload_folder_id": "10Tqb4HkVjUO6ruyE8qhbrH6pP8JqbGFl",
+    "processed_folder_id": "1KSrbCxb023YG6x353as4qcLZ5WlHZja0",
+    "max_files_size": "150",
+    "time_zone": "+07:00"
+  }
+}
+
+```
+
+#### Syncing config to GCP <a name="config-sync-set"></a>
+Go to `gdrive-bot` directory then run:
+```
+firebase-config-sync set
+```
+After executing this command, the `.runtimeconfig.json` will be propagated to GCP.
+
 ### Run on Local Server
 
-##### Compile typescript sources
+##### Before you go
+If you're running cloud functions for the first time, *you may need to do the following steps manually at least once.*
+
+###### Create local firebase config
+To run cloud functions on local emulators, the local firebase config `.runtimeconfig.json` must be provided in `gdrive-bot/functions` directory. If you're not sure how to set up the config manually, just [sync](#config-sync-get) the config from GCP to your local server.
+
+###### Compile typescript sources
 Go to `gdrive-bot/functions` directory then run:
 ```
 npm run build
@@ -86,10 +143,30 @@ Go to `gdrive-bot` directory then run:
 ```
 firebase emulators:start
 ```
+You can now access firebase emulators ui on local server on the port displayed from command output.
 
-##### Call your API
+##### Call your functions via firebase shell
+Open another cli (cmd, terminal, etc.) process and go to `gdrive-bot` directory, then run:
+```
+firebase functions:shell
+```
+You can now call cloud functions directly from the shell. For example:
+```
+firebase> helloWorld()
+```
+
+##### Call your functions via RESTful API
 
 Your cloud functions will be up & running on:
-`https://localhost:5001/fact-finder-app/$REGION/$FUNCTION_NAME`
+`https://localhost:$PORT/fact-finder-app/$REGION/$FUNCTION_NAME`
 
 *See: https://firebase.google.com/docs/functions/local-emulator*
+
+### Deploy on GCP
+
+**ATTENTION!** Everytime you make changes to local config, don't forget to [sync](config-sync-set) those changes to GCP before deploying your code.
+
+To deploy your code to GCP:
+```
+firebase deploy --only functions
+```

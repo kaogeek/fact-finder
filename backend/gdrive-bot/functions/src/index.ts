@@ -30,13 +30,16 @@ function getDriveConfig(): any {
   /*
   {
     "drive": {
+      ...
       "serviceAccount": {
         ... service-account.json ...
       },
       "uploadFolderId": "",
-      "processedFolderId": ""
+      "processedFolderId": "",
+      ...
     }
   }
+  see: ../remoteconfig.template.json for more details
   */
   return functions.config()[!isProduction() ? "dev_drive" : "drive"];
 }
