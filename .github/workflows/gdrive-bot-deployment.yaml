@@ -1,0 +1,27 @@
+on:
+  push:
+    branches:
+      - dev
+    paths:
+      - backend/gdrive-bot/**
+
+jobs:
+  deploy:
+    name: Deploy GDrive Bot
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@master
+      - name: Install Dependencies
+        run: npm install
+        working-directory: backend/gdrive-bot
+      - name: Build TypeScript
+        run: npm run build
+        working-directory: backend/gdrive-bot
+      - name: Install Firebase CLI
+        run: curl -sL https://firebase.tools | bash
+      - name: Deploy to Firebase
+        run: "firebase deploy --only functions:scoutGDrive"
+        working-directory: backend/gdrive-bot
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TWITTER_BOT_TOKEN }}
