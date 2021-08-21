@@ -1,0 +1,41 @@
+{
+    "data": {
+        "attachments": {
+            "media_keys": [
+                "7_1427616778948022274"
+            ]
+        },
+        "source": "Twitter for iPhone",
+        "author_id": "69644672",
+        "id": "1427616927665455110",
+        "possibly_sensitive": false,
+        "text": "19:11 เเก๊สน้ำตา เกือบสูงท่วมเเฟลต ดินเเดง ลมนิ่ง #ม็อบ17สิงหา https://t.co/InzBLQ7gjf",
+        "entities": {
+            "hashtags": [
+                {
+                    "start": 50,
+                    "end": 62,
+                    "tag": "ม็อบ17สิงหา"
+                }
+            ],
+            "urls": [
+                {
+                    "start": 63,
+                    "end": 86,
+                    "url": "https://t.co/InzBLQ7gjf",
+                    "expanded_url": "https://twitter.com/ittipat_tv/status/1427616927665455110/video/1",
+                    "display_url": "pic.twitter.com/InzBLQ7gjf"
+                }
+            ]
+        },
+        "lang": "th",
+        "public_metrics": {
+            "retweet_count": 567,
+            "reply_count": 11,
+            "like_count": 262,
+            "quote_count": 11
+        },
+        "conversation_id": "1427616927665455110",
+        "created_at": "2021-08-17T13:02:54.000Z"
+    }
+}
