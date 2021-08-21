@@ -1,8 +1,8 @@
+const { TWITTER_TOKEN, TWITTER_API_URL } = require("../config");
 const {
-  TWITTER_TOKEN,
-  TWITTER_API_URL,
-} = require("../config");
-const { getMentionedTweetsAPI, getTweetDetailexportsAPI } = require("../httpClient");
+  getMentionedTweetsAPI,
+  getTweetDetailexportsAPI,
+} = require("../httpClient");
 
 /**
  * When user report tweet, there are different type of report
@@ -27,8 +27,6 @@ const ENUM_REPORT_TYPE = {
 
 let twtClient = null;
 
-const getTweetDetailPath = twitterId => `/tweets/${twitterId}`;
-
 function getReportType(tweet) {
   if (tweet.referenced_tweets && tweet.referenced_tweets[0].type === "quoted") {
     return ENUM_REPORT_TYPE.QUOTE;
@@ -50,7 +48,9 @@ async function getRecordTweetDetails(tweet) {
 
 async function getTweetDetailexports(tweetId) {
   try {
-    const {data: { data } } = await getTweetDetailexportsAPI(tweetId)
+    const {
+      data: { data },
+    } = await getTweetDetailexportsAPI(tweetId);
     return data;
   } catch (e) {
     // Error: probably rate limited
@@ -78,21 +78,21 @@ class TwitterClient {
   }
 
   async getMentionedTweets() {
-    const {
-      status,
-      data: { data: tweets },
-    } = await getMentionedTweetsAPI()
+    try {
+      const {
+        data: { data: tweets },
+      } = await getMentionedTweetsAPI();
 
-    if (status !== 200) {
+      return await Promise.all(tweets.map(getRecordTweetDetails));
+    } catch (e) {
       console.error({
+        timestamp: Date.now(),
         message: "Error getting response from twitter",
-        statusCode: status,
-        error: data,
+        statusCode: e.response.status,
+        error: e.response.data,
       });
       return [];
     }
-
-    return await Promise.all(tweets.map(getRecordTweetDetails));
   }
 }
 
