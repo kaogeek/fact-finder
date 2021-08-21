@@ -47,8 +47,9 @@ exports.getMentionedTweet = async ({ sinceId, paginationToken, startTime, endTim
     "end_time": endTime,
   };
 
+  // TODO, is there any better way to create object just the property that is not undefined :D ?
   for (const i in params)  
-    if (typeof params[i] === 'undefined')   
+    if (typeof params[i] === "undefined")   
       delete params[i]; 
 
   const requestOptions = {
