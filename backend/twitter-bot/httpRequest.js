@@ -1,7 +1,6 @@
 const fetch = require("node-fetch");
 const { error, info } = require("firebase-functions/lib/logger");
 const { URL, URLSearchParams } = require("url");
-const { logger } = require("firebase-functions/v1");
 
 exports.httpRequest = async (urlString, params, requestOptions) => {
   const url = new URL(urlString);

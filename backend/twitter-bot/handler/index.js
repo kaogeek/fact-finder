@@ -82,7 +82,7 @@ exports.handlerFunc = async function (_, res) {
     .doc("LAST_UPDATE")
     .get();
   const sinceId = lastUpdateTweetRef.exists && lastUpdateTweetRef.data().id ? lastUpdateTweetRef.data().id : 0;
-  const [tweets, __] = await TwitterApi.getMentionedTweet({ sinceId });
+  const [tweets,] = await TwitterApi.getMentionedTweet({ sinceId });
   await Promise.all(tweets.map(async (infoTweet) => {
     const recordTweet = await TwitterApi.getRecordTweetDetails(infoTweet);
     if (recordTweet && await shouldSaveTweet(recordTweet)) {

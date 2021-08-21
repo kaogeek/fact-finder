@@ -41,10 +41,10 @@ exports.getMentionedTweet = async ({ sinceId, paginationToken, startTime, endTim
     "tweet.fields": TWITTER_FIELDS,
     "media.fields": TWITTER_MEDIA_FIELDS,
     "expansions": TWITTER_EXPANSION,
-    "since_id": !!sinceId ? sinceId : undefined,
-    "pagination_token": !!paginationToken ? paginationToken : undefined,
-    "start_time": !!startTime ? startTime : undefined,
-    "end_time": !!endTime ? endTime : undefined,
+    "since_id": sinceId ,
+    "pagination_token": paginationToken,
+    "start_time": startTime,
+    "end_time": endTime,
   };
 
   for (const i in params)  

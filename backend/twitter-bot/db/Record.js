@@ -1,7 +1,8 @@
 const { logger } = require("firebase-functions/v1");
 const { GeoPoint } = require("@google-cloud/firestore");
-const { mockCoordinate } = require('./mockData');
+const { mockCoordinate } = require("./mockData");
 
+// eslint-disable-next-line no-unused-vars
 function getTimestamp(recordTweet, infoTweet) {
     // TODO, logic to add exif or data from reporter
     return {
@@ -9,6 +10,7 @@ function getTimestamp(recordTweet, infoTweet) {
     };
 }
 
+// eslint-disable-next-line no-unused-vars
 function getCoordinates(recordTweet, infoTweet) {
     // TODO Remove this Mock Geo Data
     function getRandomLatLonCloseTo(center) {
@@ -69,7 +71,7 @@ exports.constructRecordFromTweet = function(recordTweet, infoTweet) {
           timestamp: getTimestamp(recordTweet, infoTweet),
           coordinates: getCoordinates(recordTweet, infoTweet),
           reporter: getReporter(recordTweet),
-          text: [recordTweet.text, infoTweet.text].join(' ||||| '), // TODO create useful text for post process later.
+          text: [recordTweet.text, infoTweet.text].join(" ||||| "), // TODO create useful text for post process later.
           weight: 5, // TODO logic to decide proper weight
           eventId: 0, // TODO add event_id
         };
