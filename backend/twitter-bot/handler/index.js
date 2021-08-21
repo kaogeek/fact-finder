@@ -1,4 +1,4 @@
-const TwitterApi = require("../twitter/client");
+const { TwitterClient } = require("../twitter/client")
 const { db } = require("../db/firestore");
 
 /**
@@ -43,6 +43,9 @@ const saveTweetToDb = async (tweet) => {
   const writeResult = await db
     .collection("records")
     .add(recordData);
+
+  await setLastUpdate(tweet);
+
   return writeResult;
 };
 
@@ -63,14 +66,15 @@ exports.handlerFunc = async function (_, res) {
     .collection("twitterBotConfig")
     .doc("LAST_UPDATE_TWEET_ID")
     .get();
-  const tweets = await TwitterApi.getMentionedTweet(lastUpdateTweetId);
-  tweets.map(async (item) => {
-    const recordTweet = await TwitterApi.getRecordTweetDetails(item);
-    if (recordTweet && shouldSaveTweet(recordTweet)) {
-      await saveTweetToDb(recordTweet);
+  
+  const twt = TwitterClient.initialize();
+  const tweets = await twt.getMentionedTweets(lastUpdateTweetId);
+
+  await Promise.all(tweets.map((tw) => {
+    if (tw && shouldSaveTweet(tw)) {
+      return saveTweetToDb(tw);
     }
-    setLastUpdate(item);
-  });
+  }));
 
   const afterUpdateTweetId = await db
     .collection("twitterBotConfig")
