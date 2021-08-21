@@ -1,0 +1,229 @@
+{
+    "data": [
+        {
+            "referenced_tweets": [
+                {
+                    "type": "quoted",
+                    "id": "1428689621953568775"
+                }
+            ],
+            "lang": "und",
+            "created_at": "2021-08-20T15:22:19.000Z",
+            "text": "@factfinderbot https://t.co/VTTiKgGhjV",
+            "conversation_id": "1428739179236663297",
+            "id": "1428739179236663297",
+            "entities": {
+                "mentions": [
+                    {
+                        "start": 0,
+                        "end": 14,
+                        "username": "factfinderbot",
+                        "id": "1426892356142342146"
+                    }
+                ],
+                "urls": [
+                    {
+                        "start": 15,
+                        "end": 38,
+                        "url": "https://t.co/VTTiKgGhjV",
+                        "expanded_url": "https://twitter.com/wirojlak/status/1428689621953568775",
+                        "display_url": "twitter.com/wirojlak/statu…"
+                    }
+                ]
+            },
+            "source": "Twitter for iPhone",
+            "in_reply_to_user_id": "1426892356142342146",
+            "possibly_sensitive": false,
+            "author_id": "1298286108099239936",
+            "public_metrics": {
+                "retweet_count": 0,
+                "reply_count": 0,
+                "like_count": 0,
+                "quote_count": 0
+            }
+        },
+        {
+            "referenced_tweets": [
+                {
+                    "type": "quoted",
+                    "id": "1428723278772801544"
+                }
+            ],
+            "lang": "und",
+            "created_at": "2021-08-20T14:43:59.000Z",
+            "text": "@factfinderbot https://t.co/SRbEKh9ywc",
+            "conversation_id": "1428729532849160196",
+            "id": "1428729532849160196",
+            "entities": {
+                "mentions": [
+                    {
+                        "start": 0,
+                        "end": 14,
+                        "username": "factfinderbot",
+                        "id": "1426892356142342146"
+                    }
+                ],
+                "urls": [
+                    {
+                        "start": 15,
+                        "end": 38,
+                        "url": "https://t.co/SRbEKh9ywc",
+                        "expanded_url": "https://twitter.com/BazzBazzba/status/1428723278772801544",
+                        "display_url": "twitter.com/BazzBazzba/sta…"
+                    }
+                ]
+            },
+            "source": "Twitter for Android",
+            "in_reply_to_user_id": "1426892356142342146",
+            "possibly_sensitive": false,
+            "author_id": "591028691",
+            "public_metrics": {
+                "retweet_count": 0,
+                "reply_count": 0,
+                "like_count": 0,
+                "quote_count": 0
+            }
+        },
+        {
+            "referenced_tweets": [
+                {
+                    "type": "replied_to",
+                    "id": "1428692488735236109"
+                }
+            ],
+            "lang": "und",
+            "created_at": "2021-08-20T13:13:26.000Z",
+            "text": "@H29no @factfinderbot",
+            "conversation_id": "1428692488735236109",
+            "id": "1428706742234337295",
+            "entities": {
+                "mentions": [
+                    {
+                        "start": 0,
+                        "end": 6,
+                        "username": "H29no",
+                        "id": "152555497"
+                    },
+                    {
+                        "start": 7,
+                        "end": 21,
+                        "username": "factfinderbot",
+                        "id": "1426892356142342146"
+                    }
+                ]
+            },
+            "source": "Twitter for iPad",
+            "in_reply_to_user_id": "152555497",
+            "possibly_sensitive": false,
+            "author_id": "1387441563727392772",
+            "public_metrics": {
+                "retweet_count": 0,
+                "reply_count": 0,
+                "like_count": 0,
+                "quote_count": 0
+            }
+        },
+        {
+            "referenced_tweets": [
+                {
+                    "type": "quoted",
+                    "id": "1428682873582718976"
+                }
+            ],
+            "lang": "und",
+            "created_at": "2021-08-20T11:49:29.000Z",
+            "text": "@factfinderbot https://t.co/lduKKcaaTh",
+            "conversation_id": "1428685618687602689",
+            "id": "1428685618687602689",
+            "entities": {
+                "mentions": [
+                    {
+                        "start": 0,
+                        "end": 14,
+                        "username": "factfinderbot",
+                        "id": "1426892356142342146"
+                    }
+                ],
+                "urls": [
+                    {
+                        "start": 15,
+                        "end": 38,
+                        "url": "https://t.co/lduKKcaaTh",
+                        "expanded_url": "https://twitter.com/plodaek/status/1428682873582718976",
+                        "display_url": "twitter.com/plodaek/status…"
+                    }
+                ]
+            },
+            "source": "Twitter for iPhone",
+            "in_reply_to_user_id": "1426892356142342146",
+            "possibly_sensitive": false,
+            "author_id": "61188271",
+            "public_metrics": {
+                "retweet_count": 0,
+                "reply_count": 0,
+                "like_count": 0,
+                "quote_count": 0
+            }
+        },
+        {
+            "referenced_tweets": [
+                {
+                    "type": "quoted",
+                    "id": "1428651130855194624"
+                }
+            ],
+            "geo": {
+                "place_id": "01023dba6ad945f4"
+            },
+            "lang": "und",
+            "created_at": "2021-08-20T09:33:55.000Z",
+            "text": "@factfinderbot https://t.co/Q2hfptaD6O",
+            "conversation_id": "1428651502827044867",
+            "id": "1428651502827044867",
+            "entities": {
+                "mentions": [
+                    {
+                        "start": 0,
+                        "end": 14,
+                        "username": "factfinderbot",
+                        "id": "1426892356142342146"
+                    }
+                ],
+                "urls": [
+                    {
+                        "start": 15,
+                        "end": 38,
+                        "url": "https://t.co/Q2hfptaD6O",
+                        "expanded_url": "https://twitter.com/Thairath_News/status/1428651130855194624",
+                        "display_url": "twitter.com/Thairath_News/…"
+                    }
+                ]
+            },
+            "source": "Twitter for Android",
+            "in_reply_to_user_id": "1426892356142342146",
+            "possibly_sensitive": false,
+            "author_id": "1387342773930524678",
+            "public_metrics": {
+                "retweet_count": 0,
+                "reply_count": 0,
+                "like_count": 0,
+                "quote_count": 0
+            }
+        }
+    ],
+    "includes": {
+        "places": [
+            {
+                "full_name": "Din Daeng, Bangkok",
+                "id": "01023dba6ad945f4"
+            }
+        ]
+    },
+    "meta": {
+        "oldest_id": "1428651502827044867",
+        "newest_id": "1428739179236663297",
+        "previous_token": "77qpymm88g5h9vqkluod2v8zv93y62ug2tnmf2klckbw7",
+        "result_count": 5,
+        "next_token": "7140dibdnow9c7btw3z1mfqcet4y9kmc208zrheceubzr"
+    }
+}

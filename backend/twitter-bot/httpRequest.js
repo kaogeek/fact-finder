@@ -1,6 +1,7 @@
 const fetch = require("node-fetch");
-const { error } = require("firebase-functions/lib/logger");
+const { error, info } = require("firebase-functions/lib/logger");
 const { URL, URLSearchParams } = require("url");
+const { logger } = require("firebase-functions/v1");
 
 exports.httpRequest = async (urlString, params, requestOptions) => {
   const url = new URL(urlString);
@@ -9,13 +10,17 @@ exports.httpRequest = async (urlString, params, requestOptions) => {
   }
   const response = await fetch(url, requestOptions);
   if (response.status !== 200) {
-    error("HTTP Status:", response.status, ":", response.statusText);
+    error("Failed to fetch Twitter API. HTTP Status:", response.status, ":", response.statusText);
     return false;
   }
   const responseJson = await response.json();
   if (!responseJson.data) {
+    if (responseJson.meta.result_count == 0) {
+      info("No data available. (Fetch to latest).");
+      return false;
+    }
     error(responseJson.title, ":", responseJson.errors[0].message);
     return false;
   }
-  return responseJson.data;
+  return responseJson;
 };

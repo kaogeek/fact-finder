@@ -1,18 +1,28 @@
 {
     "data": {
-        "public_metrics": {
-            "retweet_count": 4763,
-            "reply_count": 5,
-            "like_count": 523,
-            "quote_count": 20
+        "attachments": {
+            "media_keys": [
+                "3_1427252320325103618",
+                "3_1427252329888116736"
+            ]
         },
-        "text": "ลุงที่โดนกระสุนยางยิงที่หัวเมื่อวาน เลือดออกเยื่อหุ้มสมอง ต้องใส่เครื่องช่วยหายใจ อาการโคม่า ลุงไม่เกี่ยวกับการชุมนุมเลย ญาติรู้จากข่าวแท้ๆ หลานลุงบอกไม่รู้ว่าตำรวจจะใช้ความรุนแรงทำไมในเขตชุมชน ม็อบมาชุมนุมถึงเวลาก็กลับ \n#ม็อบ16สิงหา #ม็อบ15สิงหา https://t.co/34eRlvccOB",
-        "author_id": "74109537",
-        "id": "1427252340671664134",
         "conversation_id": "1427252340671664134",
-        "source": "Twitter for Android",
+        "text": "ลุงที่โดนกระสุนยางยิงที่หัวเมื่อวาน เลือดออกเยื่อหุ้มสมอง ต้องใส่เครื่องช่วยหายใจ อาการโคม่า ลุงไม่เกี่ยวกับการชุมนุมเลย ญาติรู้จากข่าวแท้ๆ หลานลุงบอกไม่รู้ว่าตำรวจจะใช้ความรุนแรงทำไมในเขตชุมชน ม็อบมาชุมนุมถึงเวลาก็กลับ \n#ม็อบ16สิงหา #ม็อบ15สิงหา https://t.co/34eRlvccOB",
+        "id": "1427252340671664134",
         "lang": "th",
         "entities": {
+            "hashtags": [
+                {
+                    "start": 221,
+                    "end": 233,
+                    "tag": "ม็อบ16สิงหา"
+                },
+                {
+                    "start": 234,
+                    "end": 246,
+                    "tag": "ม็อบ15สิงหา"
+                }
+            ],
             "urls": [
                 {
                     "start": 247,
@@ -28,27 +38,31 @@
                     "expanded_url": "https://twitter.com/aoikotori/status/1427252340671664134/photo/1",
                     "display_url": "pic.twitter.com/34eRlvccOB"
                 }
-            ],
-            "hashtags": [
-                {
-                    "start": 221,
-                    "end": 233,
-                    "tag": "ม็อบ16สิงหา"
-                },
-                {
-                    "start": 234,
-                    "end": 246,
-                    "tag": "ม็อบ15สิงหา"
-                }
             ]
         },
+        "possibly_sensitive": false,
         "created_at": "2021-08-16T12:54:09.000Z",
-        "attachments": {
-            "media_keys": [
-                "3_1427252320325103618",
-                "3_1427252329888116736"
-            ]
+        "public_metrics": {
+            "retweet_count": 4764,
+            "reply_count": 5,
+            "like_count": 524,
+            "quote_count": 20
         },
-        "possibly_sensitive": false
+        "source": "Twitter for Android",
+        "author_id": "74109537"
+    },
+    "includes": {
+        "media": [
+            {
+                "media_key": "3_1427252320325103618",
+                "type": "photo",
+                "url": "https://pbs.twimg.com/media/E86ebGXUcAILnlY.jpg"
+            },
+            {
+                "media_key": "3_1427252329888116736",
+                "type": "photo",
+                "url": "https://pbs.twimg.com/media/E86ebp_UcAAlEgx.jpg"
+            }
+        ]
     }
 }
