@@ -65,7 +65,7 @@ exports.constructRecordFromTweet = function(recordTweet, infoTweet) {
           referenceId: recordTweet.id,
           referenceType: "TWIITER",
           referenceUrl: `https://twitter.com/user/status/${recordTweet.id}`,
-          mediaType: eachMedia.type.toUpperCase(),
+          mediaType: (eachMedia.type === "photo") ? "IMAGE" : eachMedia.type.toUpperCase(),
           mediaUrl: (eachMedia.type === "video") ? eachMedia.preview_image_url : eachMedia.url,
           tags: getTags(recordTweet, infoTweet), // TODO merge hashtags with info tweet and remove duplicate
           timestamp: getTimestamp(recordTweet, infoTweet),
