@@ -1,7 +1,7 @@
 const { httpRequest } = require("./httpRequest");
 const { Headers } = require("node-fetch");
 
-const BEARER_TOKEN = ""; // TODO Move to secret files
+const BEARER_TOKEN = "AAAAAAAAAAAAAAAAAAAAAPL8SgEAAAAAVINsh%2Blm0a934a1JCw5MGxaPIo4%3DacGe8TGQtFTUnMZ08WP8Lj92x7ebuq8WMpK2FaRe779ROeFUPh"; // TODO Move to secret files
 const FACTFINDERBOT_TWITTER_USER_ID = "1426892356142342146";
 const TWITTER_FIELDS =
   "attachments,author_id,conversation_id,geo,created_at,entities,public_metrics,id,in_reply_to_user_id,lang,possibly_sensitive,referenced_tweets,source,text,withheld";
@@ -27,58 +27,44 @@ const ENUM_REPORT_TYPE = {
   REPLY: "REPLY",
 };
 
+const headers = new Headers();
+headers.append("Authorization", `Bearer ${BEARER_TOKEN}`);
+
+const requestOptions = {
+  method: "GET",
+  headers,
+  redirect: "follow",
+};
+
 // eslint-disable-next-line no-unused-vars
 exports.getMentionedTweet = async (lastUpdateTweetId) => {
   // TODO query by lastUpdateTweetId
   const url = `https://api.twitter.com/2/users/${FACTFINDERBOT_TWITTER_USER_ID}/mentions`;
-  var userMentionsTimelineHeader = new Headers();
-  userMentionsTimelineHeader.append("Authorization", `Bearer ${BEARER_TOKEN}`);
-  userMentionsTimelineHeader.append("User-Agent", "v2UserMentionssJS");
-
-  const requestOptions = {
-    method: "GET",
-    headers: userMentionsTimelineHeader,
-    redirect: "follow",
-  };
 
   let userMentions = [];
-  let hasNextPage = true;
-  let nextToken = null;
-  let newest_id = lastUpdateTweetId.data() ? lastUpdateTweetId.data().id : 0;
+  let newest_tweet_id = lastUpdateTweetId.data() ? lastUpdateTweetId.data().id : 0;
 
-  let params = {
-      "max_results": 100,
-      "tweet.fields": "conversation_id,referenced_tweets,entities",
-      "since_id": newest_id,
+  const params = {
+    "max_results": 5,
+    "tweet.fields": TWITTER_FIELDS,
+    "expansions": "attachments.media_keys,geo.place_id",
+    "user.fields": "username",
+    "media.fields": "duration_ms,type,url,preview_image_url",
+    "place.fields": "geo,id",
+    "since_id": newest_tweet_id,
   }
 
-  console.log("Retrieving mentions...");
-
-  while (hasNextPage) {
-
-    if (nextToken) {
-      params.pagination_token = nextToken;
+  const resp = await httpRequest(url, params, requestOptions);
+  if (resp && resp.meta && resp.meta.result_count && resp.meta.result_count > 0) {
+    if (resp.data) {
+      userMentions = resp.data;
     }
-
-    let resp = await httpRequest(url, params, requestOptions);
-    if (resp && resp.meta && resp.meta.result_count && resp.meta.result_count > 0) {
-      if (resp.data) {
-        userMentions.push.apply(userMentions, resp.data);
-      }
-      if (resp.meta.next_token) {
-        nextToken = resp.meta.next_token;
-      } else {hasNextPage = false;}
-    } else {
-      hasNextPage = false;
+    if (resp.meta.newest_id && newest_tweet_id < resp.meta.newest_id){
+      newest_tweet_id = resp.meta.newest_id;
     }
-    if (resp && resp.meta && resp.meta.newest_id && newest_id < resp.meta.newest_id){
-      newest_id = resp.meta.newest_id;
-    }
-
   }
-
   console.log(`Got ${userMentions.length} mentions`);
-  return {"data": userMentions, "newest_id": newest_id};
+  return {"data": userMentions, "newest_tweet_id": newest_tweet_id};
 };
 
 function getReportType(tweet) {
@@ -100,18 +86,16 @@ exports.getRecordTweetDetails = async (tweet) => {
 };
 
 async function getTweetDetailexports(twitterId) {
-  var tweetLookUpHeader = new Headers();
-  tweetLookUpHeader.append("Authorization", `Bearer ${BEARER_TOKEN}`);
-  tweetLookUpHeader.append("User-Agent", "v2TweetLookupJS");
   const url = `https://api.twitter.com/2/tweets/${twitterId}`;
+
   const params = {
-    "tweet.fields": TWITTER_FIELDS,
+    "tweet.fields": "attachments,conversation_id,geo,created_at,entities,public_metrics,id",
+    "expansions": "attachments.media_keys,geo.place_id",
+    "user.fields": "username",
+    "media.fields": "duration_ms,type,url,preview_image_url",
+    "place.fields": "geo,id"
   };
-  const requestOptions = {
-    method: "GET",
-    headers: tweetLookUpHeader,
-    redirect: "follow",
-  };
+
   const resp = await httpRequest(url, params, requestOptions);
-  return resp.data || false;
+  return resp || false;
 }
