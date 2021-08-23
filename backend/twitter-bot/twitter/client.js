@@ -33,6 +33,11 @@ const ENUM_REPORT_TYPE = {
 var myHeaders = new Headers();
 myHeaders.append("Authorization", `Bearer ${TWITTER_TOKEN}`);
 
+/**
+ * 
+ * @param {{sinceId: number, paginationToken: string, startTime: string, endTime: stirng}} param0 time in ISO8601 with timezone format
+ * @returns {[import("../typedefs").infoTweet[], object]}
+ */
 // eslint-disable-next-line no-unused-vars
 exports.getMentionedTweet = async ({ sinceId, paginationToken, startTime, endTime }) => {
   const url = `https://api.twitter.com/2/users/${FACTFINDERBOT_TWITTER_USER_ID}/mentions`;
@@ -72,6 +77,11 @@ function getReportType(tweet) {
   return ENUM_REPORT_TYPE.DIRECT;
 }
 
+/**
+ * 
+ * @param {import("../typedefs").infoTweet} infoTweet 
+ * @returns {import("../typedefs").recordTweet}
+ */
 exports.getRecordTweetDetails = async (infoTweet) => {
   const reportType = getReportType(infoTweet);
   if (reportType === ENUM_REPORT_TYPE.QUOTE || reportType === ENUM_REPORT_TYPE.REPLY) {
@@ -88,6 +98,11 @@ function mapToRecordTweet(response) {
   return response.data;
 }
 
+/**
+ * 
+ * @param {number} twitterId 
+ * @returns {import("../typedefs").recordTweet}
+ */
 async function getTweetDetailexports(twitterId) {
   const url = `https://api.twitter.com/2/tweets/${twitterId}`;
   const params = {

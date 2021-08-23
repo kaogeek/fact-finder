@@ -5,7 +5,8 @@ const { logger } = require("firebase-functions/v1");
 
 /**
  * Logic to decide whether to save tweet or not.
- * @param {Tweet} recordTweet Single Tweet response from Tweet API
+ * @param {import("../typedefs").recordTweet} recordTweet tweet that has record information
+ * @returns {boolean} should save or not
  */
  async function shouldSaveTweet(recordTweet) {
   logger.info("Deciding to save tweet id: ", recordTweet.id);
@@ -33,6 +34,12 @@ const { logger } = require("firebase-functions/v1");
   return true;
 }
 
+/**
+ * Check whether tweet have more info than record or not
+ * If yes, return true because we should still save those new info to db
+ * @param {recordTweet} recordTweet 
+ * @returns {boolean}
+ */
 async function tweetHaveMoreInfoThanRecord(recordTweet) {
   const item = await db
   .collection("records")
@@ -48,7 +55,8 @@ async function tweetHaveMoreInfoThanRecord(recordTweet) {
 
 /**
  * Save record tweet to database
- * @param {RecordModel} recordModel Constructed model ready to save in DB
+ * @param {import("../db/Record").recordModel} recordModel
+ * @returns {boolean}
  */
 const saveRecordModelToDb = async (recordModels) => {
   recordModels.map(async (recordModel) => {
@@ -58,6 +66,7 @@ const saveRecordModelToDb = async (recordModels) => {
         .add(recordModel);
     } catch (e) {
       console.error("Failed to write to DB.", e);
+      return false;
     }
   });
   return true;
@@ -83,6 +92,7 @@ exports.handlerFunc = async function (_, res) {
     .get();
   const sinceId = lastUpdateTweetRef.exists && lastUpdateTweetRef.data().id ? lastUpdateTweetRef.data().id : 0;
   const [tweets,] = await TwitterApi.getMentionedTweet({ sinceId });
+  tweets.map(item => item.id);
   await Promise.all(tweets.map(async (infoTweet) => {
     const recordTweet = await TwitterApi.getRecordTweetDetails(infoTweet);
     if (recordTweet && await shouldSaveTweet(recordTweet)) {
