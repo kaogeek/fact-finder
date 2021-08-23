@@ -1,10 +1,20 @@
 <template>
-  <v-row class="main-row">
-    <v-col class="map-area pa-0" cols="12" sm="8" md="8">
+  <v-row class="main-row ma-0">
+    <!-- Map Area -->
+    <!-- <v-card v-show="tab === 0" class="logo" dark
+      >Fact Finder (ช่วงพัฒนา)</v-card
+    > -->
+    <v-col
+      v-show="tab === 0 || isMobile === false"
+      class="map-area pa-0"
+      cols="12"
+      sm="8"
+      md="8"
+    >
       <div id="map"></div>
       <div class="timeline-area">
-        <v-row>
-          <v-col>
+        <v-row class="date-area">
+          <div class="mr-4">
             <b>วันที่</b>
             <v-menu
               ref="menu"
@@ -18,7 +28,7 @@
               <template v-slot:activator="{ on, attrs }">
                 <v-text-field
                   v-model="date"
-                  label="Picker in menu"
+                  label=""
                   prepend-icon="mdi-calendar"
                   readonly
                   solo
@@ -28,59 +38,89 @@
               </template>
               <v-date-picker v-model="date" no-title scrollable>
                 <v-spacer></v-spacer>
-                <v-btn text color="primary" @click="menu = false"> Cancel </v-btn>
-                <v-btn text color="primary" @click="$refs.menu.save(date)"> OK </v-btn>
+                <v-btn text color="primary" @click="menu = false">
+                  Cancel
+                </v-btn>
+                <v-btn text color="primary" @click="$refs.menu.save(date)">
+                  OK
+                </v-btn>
               </v-date-picker>
             </v-menu>
-          </v-col>
-          <v-col>
+          </div>
+          <div class="mr-4 d-flex flex-column justify-center">
             <b>ตั้งแต่เวลา</b>
-            <v-select
-              v-model="selectedStartTime"
-              :items="time"
-              label="คำค้นหา"
-              solo
-            ></v-select>
-          </v-col>
-          <v-col>
+            <vue-timepicker
+              v-model="startTime"
+              :minute-interval="10"
+            ></vue-timepicker>
+          </div>
+          <div class="mr-4 d-flex flex-column justify-center">
             <b>ถึงเวลา</b>
-            <v-select
-              v-model="selectedEndTime"
-              :items="time"
-              label="คำค้นหา"
-              solo
-            ></v-select>
-          </v-col>
+            <vue-timepicker
+              v-model="endTime"
+              :minute-interval="10"
+            ></vue-timepicker>
+          </div>
         </v-row>
         <div class="time-slider">
           <v-btn :color="'rgba(25, 118, 210, 1)'" dark depressed fab>
             <v-icon large>{{ isPlaying ? "mdi-pause" : "mdi-play" }}</v-icon>
           </v-btn>
           <vue-slider
-            class="ml-4"
-            width="820px"
+            class="slider-line ml-4"
             height="10px"
-            v-model="slider"
-            :adsorb="true"
-            :included="true"
+            width="100%"
+            v-model="value_1"
           ></vue-slider>
         </div>
       </div>
     </v-col>
-    <v-col class="search-area d-flex flex-column pl-0" cols="12" sm="4" md="4">
-      <div class="top-menu pl-3 pr-0 pt-6">
+
+    <!-- Search Area -->
+    <v-col
+      v-show="tab === 1 || isMobile === false"
+      class="search-area pa-0"
+      cols="12"
+      sm="4"
+      md="4"
+    >
+      <!-- Top Search Bar -->
+      <div class="top-menu pl-3 pr-3 pt-6">
         <p><b>ภาพเหตุการณ์ในบริเวณนี้</b></p>
         <v-row>
-          <v-col cols="12" sm="7" md="7">
-            <v-text-field
+          <v-col cols="6" sm="7" md="7">
+            <!-- <v-text-field
               v-model="searchKeyword"
               label="คำค้นหา"
               outlined
               clearable
               disabled
-            ></v-text-field>
+            ></v-text-field> -->
+            <v-combobox
+              v-model="searchKeyword"
+              :items="tagsList"
+              :search-input.sync="search"
+              hide-selected
+              hint="Maximum of 5 tags"
+              label="เพิ่มคำค้น"
+              multiple
+              persistent-hint
+              small-chips
+              outlined
+            >
+              <template v-slot:no-data>
+                <v-list-item>
+                  <v-list-item-content>
+                    <v-list-item-title>
+                      No results matching "<strong>{{ search }}</strong
+                      >". Press <kbd>enter</kbd> to create a new one
+                    </v-list-item-title>
+                  </v-list-item-content>
+                </v-list-item>
+              </template>
+            </v-combobox>
           </v-col>
-          <v-col cols="12" sm="5" md="5">
+          <v-col cols="6" sm="5" md="5">
             <v-select
               v-model="selectedTime"
               :items="timeSlots"
@@ -91,12 +131,12 @@
           </v-col>
         </v-row>
         <div>
-          แท๊กสำคัญในวันนี้:
-          <v-chip v-for="item in tags" :key="item.value" class="ma-2"
+          <div>แท๊กสำคัญในวันนี้:</div>
+          <v-chip v-for="item in tags" small :key="item.value" class="ma-2"
             >#{{ item.name_th }}</v-chip
           >
         </div>
-        <div>สัญลักษณ์ / Filters</div>
+        <div>แหล่งข้อมูล:</div>
         <div class="d-flex flex-column mt-5 mb-5">
           <v-row>
             <v-checkbox
@@ -110,6 +150,8 @@
           </v-row>
         </div>
       </div>
+
+      <!-- Bottom Search Bar -->
       <div class="bottom-menu pa-0">
         <v-timeline align-top dense>
           <v-timeline-item
@@ -126,7 +168,7 @@
                 <div class="d-flex flex-row">
                   <v-card
                     class="mr-4"
-                    v-for="n in Math.floor(Math.random() * 6) + 1"
+                    v-for="n in Math.floor(Math.random() * 3) + 1"
                     :key="n"
                     :elevation="4"
                     height="80"
@@ -145,10 +187,36 @@
         </v-timeline>
       </div>
     </v-col>
+
+    <!-- Footer menu desktop -->
+    <v-tabs
+      v-show="isMobile === true"
+      v-model="tab"
+      background-color="black accent-4"
+      height="72"
+      centered
+      dark
+      icons-and-text
+      class="footer-menu"
+    >
+      <v-tabs-slider></v-tabs-slider>
+
+      <v-tab>
+        Map
+        <v-icon>mdi-map</v-icon>
+      </v-tab>
+
+      <v-tab>
+        Timeline
+        <v-icon>mdi-timeline</v-icon>
+      </v-tab>
+    </v-tabs>
   </v-row>
 </template>
 
 <script>
+import VueTimepicker from "vue2-timepicker";
+import "vue2-timepicker/dist/VueTimepicker.css";
 import mapboxgl from "mapbox-gl";
 // https://nightcatsama.github.io/vue-slider-component/#/
 import VueSlider from "vue-slider-component/dist-css/vue-slider-component.umd.min.js";
@@ -162,6 +230,7 @@ import firebase from "firebase/app";
 export default {
   components: {
     VueSlider,
+    VueTimepicker,
   },
   data() {
     return {
@@ -173,38 +242,31 @@ export default {
         .toISOString()
         .substr(0, 10),
       menu: false,
-      searchKeyword: "#ม๊อบ 16 สิงหา",
+      searchKeyword: ["#ม๊อบ 18 สิงหา"],
+      search: null,
       timeSlots: ["10 นาที", "30 นาที", "1 ชั่วโมง"],
       selectedTime: "10 นาที",
-      selectedStartTime: "15:00",
-      selectedEndTime: "16:00",
+      typeDataList: ["exif", "reporter", "source"],
+      startTime: "15:00",
+      endTime: "16:00",
       tags: [
-        { value: "130821", name_th: "ม๊อบ 13 สิงหา" },
+        { value: "130821", name_th: "ม๊อบ 18 สิงหา" },
         { value: "140821", name_th: "ป้าเป้า" },
-        // { value: "150821", name_th: "คณะราษเปซ" },
+        { value: "150821", name_th: "คณะราษเปซ" },
       ],
+      tagsList: ["#ม๊อบ 18 สิงหา", "ป้าเป้า", "ไฮโซลูกนัท", "ทะลุฟ้า"],
       filter: [
-        // { value: "violence", type: "violence", name_th: "ความรุนแรง" },
-        { value: "protest", type: "violence", name_th: "การประท้วง" },
-        { value: "arrest", type: "violence", name_th: "การจับกุม" },
-        { value: "officer", type: "officer", name_th: "การกระทำของเจ้าหน้าที่" },
-        { value: "mob", type: "mob", name_th: "การกระทำของผู้ชุมนุม" },
-        { value: "etc", type: "etc", name_th: "อื่นๆ/ไม่ระบุ" },
+        { value: "people", type: "people", name_th: "People" },
+        { value: "media", type: "media", name_th: "Media" },
+        { value: "ngo", type: "ngo", name_th: "NGOs" },
+        { value: "politician", type: "politician", name_th: "Politician" },
       ],
-      selectedFilter: ["protest", "arrest", "officer", "mob", "etc"],
-      slider: 0,
+      selectedFilter: ["media", "ngo", "politician"],
+      value_1: [0, 100],
       sliderMax: 100,
       isPlaying: false,
-      time: ["15:00", "15:05", "15:10", "15:20", "15:30", "15:40"],
-      markerList: [
-        [100.53826, 13.764981],
-        [100.53914, 13.764921],
-        [100.53816, 13.764921],
-        [100.53829, 13.764911],
-        [100.537566, 13.763655],
-        [100.537641, 13.763916],
-        [100.537556, 13.764093],
-      ],
+      isMobile: false,
+      tab: 0,
       timelineEvent: [
         {
           id: "1",
@@ -242,53 +304,40 @@ export default {
           ],
           place: "อนุสาวรีย์ประชาธิปไตย",
         },
-        {
-          id: "5",
-          time: "15.55",
-          img: [
-            "https://www.prachachat.net/wp-content/uploads/2020/10/S__136388620-728x485.jpg",
-            "https://www.prachachat.net/wp-content/uploads/2020/10/S__136388620-728x485.jpg",
-          ],
-          place: "แยกดินแดง",
-        },
-        {
-          id: "6",
-          time: "16.15",
-          img: [
-            "https://www.prachachat.net/wp-content/uploads/2020/10/S__136388620-728x485.jpg",
-            "https://www.prachachat.net/wp-content/uploads/2020/10/S__136388620-728x485.jpg",
-          ],
-          place: "ห้าแยกลาดพร้าว",
-        },
-        {
-          id: "7",
-          time: "17.00",
-          img: [
-            "https://www.prachachat.net/wp-content/uploads/2020/10/S__136388620-728x485.jpg",
-            "https://www.prachachat.net/wp-content/uploads/2020/10/S__136388620-728x485.jpg",
-          ],
-          place: "ห้าแยกลาดพร้าว",
-        },
       ],
     };
   },
+  created() {
+    if (screen.width <= 760) {
+      this.isMobile = true;
+      console.log(this.isMobile);
+      // return true;
+    } else {
+      this.isMobile = false;
+      // return false;
+      console.log(this.isMobile);
+    }
+  },
   mounted() {
     this.createMap();
-    this.getData();
+    // this.getData();
   },
   methods: {
     getData() {
-      db.collection("records")
-      .get()
-      .then(querySnapshot => {
-        // According to QuerySnapshot: https://firebase.google.com/docs/reference/js/firebase.firestore.QueryDocumentSnapshot
-        // querySnapshot.docs is an array of QueryDocumentSnapshot: https://firebase.google.com/docs/reference/js/firebase.firestore.QueryDocumentSnapshot
-        // To get data from query result, we've to call docSnapshot.data().
-        var feed = querySnapshot.docs.map(docSnapshot => docSnapshot.data())
+      db.collection("env/dev/records")
+        .get()
+        .then((querySnapshot) => {
+          // According to QuerySnapshot: https://firebase.google.com/docs/reference/js/firebase.firestore.QueryDocumentSnapshot
+          // querySnapshot.docs is an array of QueryDocumentSnapshot: https://firebase.google.com/docs/reference/js/firebase.firestore.QueryDocumentSnapshot
+          // To get data from query result, we've to call docSnapshot.data().
+          var feed = querySnapshot.docs.map((docSnapshot) =>
+            docSnapshot.data()
+          );
 
-        // This is an array of firestore [`records`]
-        this.feedData = feed;
-      })
+          // This is an array of firestore [`records`]
+          this.feedData = feed;
+          console.log(feed);
+        });
     },
     createMap() {
       mapboxgl.accessToken = this.access_token;
@@ -297,15 +346,6 @@ export default {
         style: "mapbox://styles/mapbox/light-v10", // style URL
         center: [100.53826, 13.764981], // starting position [lng, lat]
         zoom: 15, // starting zoom
-      });
-      // this.createMarker();
-    },
-    createMarker() {
-      this.markerList.forEach((element) => {
-        console.log(element[0]);
-        const marker1 = new mapboxgl.Marker()
-          .setLngLat([element[0], element[1]])
-          .addTo(this.map);
       });
     },
     toggleIsPlay() {
@@ -323,11 +363,44 @@ export default {
         clearInterval(self.playInterval);
       }
     },
+    madeData(data) {
+      for (var val of data) {
+        if (val.coordinates["exif"] !== null) {
+          // create the popup
+          const popup = new mapboxgl.Popup().setHTML(
+            "ref: " +
+              val.referenceUrl +
+              '</br><img class="img-popup" src="' +
+              val.mediaUrl +
+              '">'
+          );
+          console.log(val);
+          const marker1 = new mapboxgl.Marker()
+            .setLngLat([
+              val.coordinates["exif"]._long,
+              val.coordinates["exif"]._lat,
+            ])
+            .setPopup(popup)
+            .addTo(this.map);
+        } else {
+          console.log("Not found location");
+        }
+        console.log(val.coordinates["exif"]);
+        // var date = new Date(val.timestamp.seconds * 1000);
+        // var hours = date.getHours();
+        // var minutes = "0" + date.getMinutes();
+        // var seconds = "0" + date.getSeconds();
+        // // Will display time in 10:30:23 format
+        // var formattedTime = hours + ":" + minutes.substr(-2) + ":" + seconds.substr(-2);
+        // console.log(date.getDate());
+        // console.log(formattedTime);
+      }
+    },
   },
   watch: {
     feedData: function (data) {
       if (!data) {
-        alert('Feed Data is unavailable!');
+        alert("Feed Data is unavailable!");
       }
 
       if (!Array.isArray(data)) {
@@ -335,20 +408,9 @@ export default {
         // wrap it into array automatically!
         data = [data];
       }
-
-      for (var val of data) {
-        // create the popup
-        const popup = new mapboxgl.Popup().setHTML(
-          'reference: ' + val.referenceUrl +
-          '</br><img class="img-popup" src="' + val.mediaUrl +'">'
-        );
-
-        const marker1 = new mapboxgl.Marker()
-          .setLngLat([val.coordinates._long, val.coordinates._lat])
-          .setPopup(popup)
-          .addTo(this.map);
-      }
+      this.madeData(data);
     },
+    typeDataList: function (val) {},
   },
 };
 </script>
@@ -360,23 +422,22 @@ export default {
   height: 100%;
 }
 .search-area {
+  display: flex;
+  flex-direction: column;
   z-index: 1000;
 }
 #map {
   width: 100%;
   height: 100%;
 }
-/* .mapboxgl-ctrl-bottom-right {
-  display: none;
-} */
 .top-menu {
-  /* height: 20%; */
   height: 300px;
+  box-sizing: border-box;
 }
 .bottom-menu {
   height: calc(100% - 300px);
   overflow-y: scroll;
-  overflow-x: none;
+  box-sizing: border-box;
 }
 .v-messages,
 .v-text-field__details {
@@ -400,5 +461,67 @@ export default {
 .img-popup {
   height: 240px;
   width: 100%;
+}
+.vue__time-picker {
+  background-color: white;
+  box-shadow: 0px 3px 1px -2px rgb(0 0 0 / 20%),
+    0px 2px 2px 0px rgb(0 0 0 / 14%), 0px 1px 5px 0px rgb(0 0 0 / 12%);
+  font-family: "Prompt", sans-serif !important;
+}
+.vue__time-picker input.display-time {
+  border: unset !important;
+}
+.vue__time-picker-dropdown,
+.vue__time-picker .dropdown {
+  top: -161px;
+}
+.footer-menu {
+  position: absolute;
+  bottom: 0;
+  height: 72px;
+}
+.slider-line {
+  width: 820px;
+}
+.date-area {
+  margin: 0px;
+}
+.logo {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  width: 160px;
+  padding: 10px;
+  font-size: 24px;
+  display: flex;
+  justify-content: center;
+  z-index: 1000;
+}
+
+@media only screen and (max-width: 600px) {
+  .map-area {
+    height: calc(100% - 72px);
+  }
+  .search-area {
+    height: 100%;
+  }
+  .bottom-menu {
+    height: calc(100% - 372px);
+  }
+  .timeline-area {
+    bottom: 120px;
+  }
+  .slider-line {
+    width: 220px !important;
+  }
+  .date-area {
+    margin-bottom: 12px !important;
+  }
+  .logo {
+    width: 100px;
+    font-size: 12px;
+    top: 10px;
+    left: 10px;
+  }
 }
 </style>
