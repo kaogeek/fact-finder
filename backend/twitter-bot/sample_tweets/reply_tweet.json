@@ -1,0 +1,41 @@
+{
+    "data": {
+        "author_id": "1387441563727392772",
+        "text": "@H29no @factfinderbot",
+        "created_at": "2021-08-20T13:13:26.000Z",
+        "id": "1428706742234337295",
+        "lang": "und",
+        "public_metrics": {
+            "retweet_count": 0,
+            "reply_count": 0,
+            "like_count": 0,
+            "quote_count": 0
+        },
+        "entities": {
+            "mentions": [
+                {
+                    "start": 0,
+                    "end": 6,
+                    "username": "H29no",
+                    "id": "152555497"
+                },
+                {
+                    "start": 7,
+                    "end": 21,
+                    "username": "factfinderbot",
+                    "id": "1426892356142342146"
+                }
+            ]
+        },
+        "possibly_sensitive": false,
+        "source": "Twitter for iPad",
+        "referenced_tweets": [
+            {
+                "type": "replied_to",
+                "id": "1428692488735236109"
+            }
+        ],
+        "conversation_id": "1428692488735236109",
+        "in_reply_to_user_id": "152555497"
+    }
+}
