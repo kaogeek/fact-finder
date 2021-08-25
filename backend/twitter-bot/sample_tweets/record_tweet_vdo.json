@@ -1,10 +1,15 @@
 {
     "data": {
-        "attachments": {
-            "media_keys": [
-                "7_1427616778948022274"
-            ]
+        "id": "1427616927665455110",
+        "author_id": "69644672",
+        "created_at": "2021-08-17T13:02:54.000Z",
+        "public_metrics": {
+            "retweet_count": 567,
+            "reply_count": 11,
+            "like_count": 263,
+            "quote_count": 11
         },
+        "lang": "th",
         "entities": {
             "urls": [
                 {
@@ -24,19 +29,14 @@
             ]
         },
         "possibly_sensitive": false,
-        "id": "1427616927665455110",
-        "text": "19:11 เเก๊สน้ำตา เกือบสูงท่วมเเฟลต ดินเเดง ลมนิ่ง #ม็อบ17สิงหา https://t.co/InzBLQ7gjf",
-        "source": "Twitter for iPhone",
-        "author_id": "69644672",
-        "lang": "th",
-        "created_at": "2021-08-17T13:02:54.000Z",
-        "public_metrics": {
-            "retweet_count": 567,
-            "reply_count": 11,
-            "like_count": 263,
-            "quote_count": 11
+        "attachments": {
+            "media_keys": [
+                "7_1427616778948022274"
+            ]
         },
-        "conversation_id": "1427616927665455110"
+        "conversation_id": "1427616927665455110",
+        "source": "Twitter for iPhone",
+        "text": "19:11 เเก๊สน้ำตา เกือบสูงท่วมเเฟลต ดินเเดง ลมนิ่ง #ม็อบ17สิงหา https://t.co/InzBLQ7gjf"
     },
     "includes": {
         "media": [
