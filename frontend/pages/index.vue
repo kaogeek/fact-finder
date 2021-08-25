@@ -1,9 +1,9 @@
 <template>
   <v-row class="main-row ma-0">
     <!-- Map Area -->
-    <v-card v-show="tab === 0" class="logo" dark
+    <!-- <v-card v-show="tab === 0" class="logo" dark
       >Fact Finder (ช่วงพัฒนา)</v-card
-    >
+    > -->
     <v-col class="map-area pa-0" cols="12" sm="8" md="8">
       <div id="map"></div>
       <div class="timeline-area">
