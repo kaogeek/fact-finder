@@ -1,16 +1,10 @@
 <template>
   <v-row class="main-row ma-0">
     <!-- Map Area -->
-    <!-- <v-card v-show="tab === 0" class="logo" dark
+    <v-card v-show="tab === 0" class="logo" dark
       >Fact Finder (ช่วงพัฒนา)</v-card
-    > -->
-    <v-col
-      v-show="tab === 0 || isMobile === false"
-      class="map-area pa-0"
-      cols="12"
-      sm="8"
-      md="8"
     >
+    <v-col class="map-area pa-0" cols="12" sm="8" md="8">
       <div id="map"></div>
       <div class="timeline-area">
         <v-row class="date-area">
@@ -63,40 +57,28 @@
           </div>
         </v-row>
         <div class="time-slider">
-          <v-btn :color="'rgba(25, 118, 210, 1)'" dark depressed fab>
+          <v-btn @click="toggleIsPlay" :color="'rgba(25, 118, 210, 1)'" dark depressed fab>
             <v-icon large>{{ isPlaying ? "mdi-pause" : "mdi-play" }}</v-icon>
           </v-btn>
           <vue-slider
             class="slider-line ml-4"
             height="10px"
             width="100%"
-            v-model="value_1"
+            v-model="sliderValue"
           ></vue-slider>
         </div>
       </div>
     </v-col>
 
     <!-- Search Area -->
-    <v-col
-      v-show="tab === 1 || isMobile === false"
-      class="search-area pa-0"
-      cols="12"
-      sm="4"
-      md="4"
-    >
+    <v-col class="search-area pa-0" cols="12" sm="4" md="4">
       <!-- Top Search Bar -->
       <div class="top-menu pl-3 pr-3 pt-6">
         <p><b>ภาพเหตุการณ์ในบริเวณนี้</b></p>
         <v-row>
           <v-col cols="6" sm="7" md="7">
-            <!-- <v-text-field
-              v-model="searchKeyword"
-              label="คำค้นหา"
-              outlined
-              clearable
-              disabled
-            ></v-text-field> -->
             <v-combobox
+              class="search-tag"
               v-model="searchKeyword"
               :items="tagsList"
               :search-input.sync="search"
@@ -153,64 +135,38 @@
 
       <!-- Bottom Search Bar -->
       <div class="bottom-menu pa-0">
-        <v-timeline align-top dense>
+        <v-timeline align-top dense v-if="feedData.length !== 0">
           <v-timeline-item
-            v-for="item in timelineEvent"
-            :key="item.id"
+            v-for="item in feedData"
+            :key="item.referenceUrl"
             color="pink"
             small
           >
             <v-row class="pt-1">
               <v-col cols="3">
                 <div class="mb-3">
-                  <strong>{{ item.time }} น.</strong>
+                  <strong
+                    >{{
+                      generateTime(item.timestamp["exif"].seconds)
+                    }}
+                    น.</strong
+                  >
                 </div>
                 <div class="d-flex flex-row">
-                  <v-card
-                    class="mr-4"
-                    v-for="n in Math.floor(Math.random() * 3) + 1"
-                    :key="n"
-                    :elevation="4"
-                    height="80"
-                    width="80"
-                  >
-                    <v-img :src="item.img[0]" height="100%"></v-img>
+                  <v-card class="mr-4" :elevation="4" height="80" width="80">
+                    <v-img :src="item.mediaUrl" height="100%"></v-img>
                   </v-card>
                 </div>
               </v-col>
-              <v-col>
+              <!-- <v-col>
                 <strong></strong>
-                <div>{{ item.place }}</div>
-              </v-col>
+                <div>{{ item }}</div>
+              </v-col> -->
             </v-row>
           </v-timeline-item>
         </v-timeline>
       </div>
     </v-col>
-
-    <!-- Footer menu desktop -->
-    <v-tabs
-      v-show="isMobile === true"
-      v-model="tab"
-      background-color="black accent-4"
-      height="72"
-      centered
-      dark
-      icons-and-text
-      class="footer-menu"
-    >
-      <v-tabs-slider></v-tabs-slider>
-
-      <v-tab>
-        Map
-        <v-icon>mdi-map</v-icon>
-      </v-tab>
-
-      <v-tab>
-        Timeline
-        <v-icon>mdi-timeline</v-icon>
-      </v-tab>
-    </v-tabs>
   </v-row>
 </template>
 
@@ -225,7 +181,6 @@ import "vue-slider-component/dist-css/vue-slider-component.css";
 import "vue-slider-component/theme/default.css";
 
 import { db } from "~/plugins/firebaseConfig.js";
-import firebase from "firebase/app";
 
 export default {
   components: {
@@ -237,17 +192,18 @@ export default {
       access_token:
         "pk.eyJ1Ijoibml0aWtvcm4iLCJhIjoiY2p6ZHR0Yjk0MDNxNDNncGhqbDk5M3ZpaCJ9.FW231UaLDWmlgt3d7HQ1yg",
       map: {},
-      feedData: {},
-      date: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
-        .toISOString()
-        .substr(0, 10),
+      feedData: [],
+      // date: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
+      //   .toISOString()
+      //   .substr(0, 10),
+      date: "2021-08-21",
       menu: false,
       searchKeyword: ["#ม๊อบ 18 สิงหา"],
       search: null,
       timeSlots: ["10 นาที", "30 นาที", "1 ชั่วโมง"],
       selectedTime: "10 นาที",
       typeDataList: ["exif", "reporter", "source"],
-      startTime: "15:00",
+      startTime: "00:00",
       endTime: "16:00",
       tags: [
         { value: "130821", name_th: "ม๊อบ 18 สิงหา" },
@@ -262,81 +218,27 @@ export default {
         { value: "politician", type: "politician", name_th: "Politician" },
       ],
       selectedFilter: ["media", "ngo", "politician"],
-      value_1: [0, 100],
+      sliderValue: 0,
       sliderMax: 100,
       isPlaying: false,
       isMobile: false,
       tab: 0,
-      timelineEvent: [
-        {
-          id: "1",
-          time: "15.00",
-          img: [
-            "https://www.prachachat.net/wp-content/uploads/2020/10/S__136388620-728x485.jpg",
-            "https://www.prachachat.net/wp-content/uploads/2020/10/S__136388620-728x485.jpg",
-          ],
-          place: "ราชประสงค์",
-        },
-        {
-          id: "2",
-          time: "15.15",
-          img: [
-            "https://www.prachachat.net/wp-content/uploads/2020/10/S__136388620-728x485.jpg",
-            "https://www.prachachat.net/wp-content/uploads/2020/10/S__136388620-728x485.jpg",
-          ],
-          place: "สนามหลวง",
-        },
-        {
-          id: "3",
-          time: "15.30",
-          img: [
-            "https://www.prachachat.net/wp-content/uploads/2020/10/S__136388620-728x485.jpg",
-            "https://www.prachachat.net/wp-content/uploads/2020/10/S__136388620-728x485.jpg",
-          ],
-          place: "อนุสาวรีย์ประชาธิปไตย",
-        },
-        {
-          id: "4",
-          time: "15.45",
-          img: [
-            "https://www.prachachat.net/wp-content/uploads/2020/10/S__136388620-728x485.jpg",
-            "https://www.prachachat.net/wp-content/uploads/2020/10/S__136388620-728x485.jpg",
-          ],
-          place: "อนุสาวรีย์ประชาธิปไตย",
-        },
-      ],
+      mapMarkers: [],
     };
   },
-  created() {
-    if (screen.width <= 760) {
-      this.isMobile = true;
-      console.log(this.isMobile);
-      // return true;
-    } else {
-      this.isMobile = false;
-      // return false;
-      console.log(this.isMobile);
-    }
-  },
+  created() {},
   mounted() {
     this.createMap();
-    // this.getData();
+    // this.getTag();
+    this.getDataFromDate(this.date, this.startTime, this.endTime);
   },
   methods: {
-    getData() {
-      db.collection("env/dev/records")
+    getTag() {
+      db.collection("env/dev/tags")
         .get()
-        .then((querySnapshot) => {
-          // According to QuerySnapshot: https://firebase.google.com/docs/reference/js/firebase.firestore.QueryDocumentSnapshot
-          // querySnapshot.docs is an array of QueryDocumentSnapshot: https://firebase.google.com/docs/reference/js/firebase.firestore.QueryDocumentSnapshot
-          // To get data from query result, we've to call docSnapshot.data().
-          var feed = querySnapshot.docs.map((docSnapshot) =>
-            docSnapshot.data()
-          );
-
-          // This is an array of firestore [`records`]
-          this.feedData = feed;
-          console.log(feed);
+        .then((ss) => {
+          // this.tagsList = tags;
+          console.log(ss);
         });
     },
     createMap() {
@@ -345,56 +247,79 @@ export default {
         container: "map", // container ID
         style: "mapbox://styles/mapbox/light-v10", // style URL
         center: [100.53826, 13.764981], // starting position [lng, lat]
-        zoom: 15, // starting zoom
+        zoom: 10, // starting zoom
       });
     },
     toggleIsPlay() {
       const self = this;
       self.isPlaying = !self.isPlaying;
-      if (self.isPlaying && self.slider === self.sliderMax) {
+      if (self.isPlaying && self.sliderValue === self.sliderMax) {
+        clearInterval(self.playInterval);
+        self.sliderValue = 0;
+        // self.playInterval = setInterval(() => {
+        //   self.sliderValue += 1;
+        // }, 300);
+      } else if (self.isPlaying && self.sliderValue !== self.sliderMax) {
         self.playInterval = setInterval(() => {
-          self.slider += 1;
-        }, 300);
-      } else if (self.isPlaying && self.slider !== self.sliderMax) {
-        self.playInterval = setInterval(() => {
-          self.slider += 1;
+          self.sliderValue += 1;
         }, 300);
       } else {
         clearInterval(self.playInterval);
       }
     },
     madeData(data) {
+      this.mapMarkers.forEach((marker) => marker.remove());
+      this.mapMarkers = [];
+
       for (var val of data) {
         if (val.coordinates["exif"] !== null) {
           // create the popup
           const popup = new mapboxgl.Popup().setHTML(
-            "ref: " +
-              val.referenceUrl +
+            "เวลา: " +
+              this.generateTime(val.timestamp["exif"].seconds) +
               '</br><img class="img-popup" src="' +
               val.mediaUrl +
               '">'
           );
-          console.log(val);
-          const marker1 = new mapboxgl.Marker()
+          const marker = new mapboxgl.Marker()
             .setLngLat([
               val.coordinates["exif"]._long,
               val.coordinates["exif"]._lat,
             ])
             .setPopup(popup)
             .addTo(this.map);
+          this.mapMarkers.push(marker);
         } else {
           console.log("Not found location");
         }
-        console.log(val.coordinates["exif"]);
-        // var date = new Date(val.timestamp.seconds * 1000);
-        // var hours = date.getHours();
-        // var minutes = "0" + date.getMinutes();
-        // var seconds = "0" + date.getSeconds();
-        // // Will display time in 10:30:23 format
-        // var formattedTime = hours + ":" + minutes.substr(-2) + ":" + seconds.substr(-2);
-        // console.log(date.getDate());
-        // console.log(formattedTime);
       }
+    },
+    getDataFromDate(date, start, end) {
+      let startDate = new Date(date + " " + start);
+      let endDate = new Date(date + " " + end);
+      db.collection("env/dev/records")
+        .where("timestamp.exif", ">", startDate)
+        .where("timestamp.exif", "<", endDate)
+        .orderBy("timestamp.exif")
+        .get()
+        .then((querySnapshot) => {
+          var feed = querySnapshot.docs.map((docSnapshot) =>
+            docSnapshot.data()
+          );
+          this.feedData = feed;
+          console.log(this.feedData);
+        });
+    },
+    generateTime(timestamp) {
+      let date = new Date(timestamp * 1000);
+      let hours = date.getHours();
+      let minutes = "0" + date.getMinutes();
+      let seconds = "0" + date.getSeconds();
+
+      let formattedTime =
+        hours + ":" + minutes.substr(-2) + ":" + seconds.substr(-2);
+
+      return formattedTime;
     },
   },
   watch: {
@@ -410,7 +335,15 @@ export default {
       }
       this.madeData(data);
     },
-    typeDataList: function (val) {},
+    date: function (val) {
+      this.getDataFromDate(val, this.startTime, this.endTime);
+    },
+    startTime: function (val) {
+      this.getDataFromDate(this.date, val, this.endTime);
+    },
+    endTime: function (val) {
+      this.getDataFromDate(this.date, this.startTime, val);
+    },
   },
 };
 </script>
@@ -433,11 +366,13 @@ export default {
 .top-menu {
   height: 300px;
   box-sizing: border-box;
+  z-index: -100;
 }
 .bottom-menu {
   height: calc(100% - 300px);
   overflow-y: scroll;
   box-sizing: border-box;
+  z-index: -200;
 }
 .v-messages,
 .v-text-field__details {
@@ -485,6 +420,7 @@ export default {
 }
 .date-area {
   margin: 0px;
+  z-index: 10000;
 }
 .logo {
   position: absolute;
@@ -497,19 +433,22 @@ export default {
   justify-content: center;
   z-index: 1000;
 }
+.search-tag {
+  z-index: 10000;
+}
 
 @media only screen and (max-width: 600px) {
   .map-area {
-    height: calc(100% - 72px);
+    height: calc(100% - 120px);
   }
   .search-area {
     height: 100%;
   }
   .bottom-menu {
-    height: calc(100% - 372px);
+    height: calc(100% - 300px);
   }
   .timeline-area {
-    bottom: 120px;
+    bottom: 160px;
   }
   .slider-line {
     width: 220px !important;
