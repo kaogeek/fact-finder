@@ -14,8 +14,9 @@ const SCHEDULE = "* * * * *";
 
 // Drive default configs
 const DEFAULT_UPLOAD_FOLDER_ID = "10Tqb4HkVjUO6ruyE8qhbrH6pP8JqbGFl";
+const DEFAULT_ARCHIVE_FOLDER_ID = "1Nq1kJ5uasJ6qJkFwsXmhvyFZ_jGlroua";
 const DEFAULT_PROCESSED_FOLDER_ID = "1KSrbCxb023YG6x353as4qcLZ5WlHZja0";
-const DEFAULT_MAX_FILES_SIZE = 150; // The maximun file count to be processed for each execution
+const DEFAULT_MAX_FILES_SIZE = 30; // The maximun file count to be processed for each execution
 const DEFAULT_TIME_ZONE = "+07:00"; // Use this timezone if "TimeZoneOffset" does not present in EXIF
 
 // Start writing Firebase Functions
@@ -54,6 +55,15 @@ function getUploadFolderId(): string {
   } catch (e) {
     // Return default value if runtime config is not available
     return DEFAULT_UPLOAD_FOLDER_ID;
+  }
+}
+
+function getArchiveFolderId(): string {
+  try {
+    return getDriveConfig()["archive_folder_id"];
+  } catch (e) {
+    // Return default value if runtime config is not available
+    return DEFAULT_ARCHIVE_FOLDER_ID;
   }
 }
 
@@ -203,7 +213,7 @@ function isSupportFile(file: any): boolean {
   let mimeType = file.mimeType.toString().toLowerCase();
 
   // We do only accept image/* and video/*
-  return mimeType.startsWith("image/") || mimeType.startsWith("video/*");
+  return mimeType.startsWith("image/") || mimeType.startsWith("video/");
 }
 
 function toDecimalLatLng(degree: any[]): number | null {
@@ -322,7 +332,12 @@ async function getFileOwner(file: any): Promise<any> {
 **/
 async function processImage(file: any, buffer: Buffer): Promise<any> {
   // Try to extract EXIF data first
-  return extractEXIF(buffer).then(async (exif: EXIFInfo) => {
+  return extractEXIF(buffer).catch(e => {
+    // Cannot extract EXIF from image, log an error.
+    console.error(e);
+    // Then, return an empty EXIFInfo object.
+    return new EXIFInfo(null, null);
+  }).then(async (exif: EXIFInfo) => {
     return getFileOwner(file).then(owner => {
       let reporterId = "google:" + owner.emailAddress;
 
@@ -362,6 +377,21 @@ async function processImage(file: any, buffer: Buffer): Promise<any> {
   });
 }
 
+async function moveFile(file: any, toFolderId: string): Promise<any> {
+  let client = (file as any)._getClient();
+
+  return client.request({
+    baseURL: GOOGLE_DRIVE_API,
+    url: `/files/${file.id}`,
+    method: "PATCH",
+    params: {
+      // Move from upload folder to processed folder
+      removeParents: file.parents[0],
+      addParents: toFolderId
+    }
+  });
+}
+
 /**
 * @returns A Promise of `records` to be created
 **/
@@ -383,6 +413,7 @@ function funcName(name: string): string {
 
 exports[funcName("scoutGDrive")] = functions.region(REGION).pubsub.schedule(SCHEDULE).timeZone(TZ).onRun(async () => {
   const uploadFolder = getUploadFolderId();
+  const archiveFolder = getArchiveFolderId();
   const processedFolder = getProcessedFolderId();
 
   // First, list files in upload folder.
@@ -390,12 +421,21 @@ exports[funcName("scoutGDrive")] = functions.region(REGION).pubsub.schedule(SCHE
     let promises: Promise<any>[] = [];
 
     for (let file of files) {
+      if (file.id === archiveFolder) {
+        // If current file is archive folder itself, just ignore it!
+        // Note: The archive folder will be in upload folder.
+        continue;
+      }
+
       if (!isSupportFile(file)) {
-        // Move it to TRASH !!!
+        // Move it to ARCHIVE !!!
         // Since file type is not supported
+        // Note: We've to move to archive instead of DELETE
+        // since Google Service Account might has no permission
+        // to delete a file uploaded by other users.
 
         // Convert all rejects to resolves with "error"
-        promises.push(file.delete().then(() => true).catch(e => e));
+        promises.push(moveFile(file, archiveFolder).catch(e => e));
       } else {
         // Process this file ...
         // Down load the file first
@@ -421,18 +461,8 @@ exports[funcName("scoutGDrive")] = functions.region(REGION).pubsub.schedule(SCHE
           }
         }).then(move => {
           if (move) {
-            let client = (file as any)._getClient();
-
-            return client.request({
-              baseURL: GOOGLE_DRIVE_API,
-              url: `/files/${file.id}`,
-              method: "PATCH",
-              params: {
-                // Move from upload folder to processed folder
-                removeParents: uploadFolder,
-                addParents: processedFolder
-              }
-            });
+            // Move file to processed folder.
+            return moveFile(file, processedFolder);
           } else {
             return Promise.resolve();
           }
@@ -466,4 +496,3 @@ exports[funcName("scoutGDrive")] = functions.region(REGION).pubsub.schedule(SCHE
     }
   });
 });
-
