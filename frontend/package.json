@@ -14,6 +14,7 @@
     "mapbox-gl": "^2.4.0",
     "nuxt": "^2.15.7",
     "vue-slider-component": "^3.2.14",
+    "vue2-timepicker": "^1.1.6",
     "vuefire": "^2.2.5",
     "vuetify": "^2.5.5"
   },

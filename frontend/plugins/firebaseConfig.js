@@ -15,7 +15,7 @@ if (!firebase.apps.length) {
 }
 
 // Get a Firestore instance
-export const db = fb.firestore();
+export const db = fb.firestore()
 
 // Export types that exists in Firestore
 // This is not always necessary, but it's used in other examples

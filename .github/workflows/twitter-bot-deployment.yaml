@@ -18,7 +18,7 @@ jobs:
       - name: Install Firebase CLI
         run: curl -sL https://firebase.tools | bash 
       - name: Deploy to Firebase
-        run: firebase deploy --only functions
+        run: "firebase deploy --only functions:scoutTwitter"
         working-directory: backend/twitter-bot
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TWITTER_BOT_TOKEN }}
