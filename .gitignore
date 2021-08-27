@@ -111,3 +111,6 @@ dist
 
 # Firebase cloud function build files
 */**/functions/lib/
+
+# Firebase local runtime configs
+.runtimeconfig.json
