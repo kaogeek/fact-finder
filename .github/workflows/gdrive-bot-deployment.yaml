@@ -21,7 +21,7 @@ jobs:
       - name: Install Firebase CLI
         run: curl -sL https://firebase.tools | bash
       - name: Deploy to Firebase
-        run: "firebase deploy --only functions"
+        run: "firebase deploy --only functions:scoutGDrive,functions:dev_scoutGDrive"
         working-directory: backend/gdrive-bot/functions
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TWITTER_BOT_TOKEN }}
