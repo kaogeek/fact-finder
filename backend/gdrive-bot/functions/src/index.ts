@@ -14,6 +14,8 @@ const REGION = "asia-southeast1";
 const TZ = "Asia/Bangkok";
 // Run every minute!
 const SCHEDULE = "* * * * *";
+// Set cloudfunctions RT memory
+const MEMORY = "1GB";
 
 // Drive default configs
 const DEFAULT_UPLOAD_FOLDER_ID = "10Tqb4HkVjUO6ruyE8qhbrH6pP8JqbGFl";
@@ -512,7 +514,9 @@ function funcName(name: string): string {
   return name;
 }
 
-exports[funcName("scoutGDrive")] = functions.region(REGION).pubsub.schedule(SCHEDULE).timeZone(TZ).onRun(async () => {
+exports[funcName("scoutGDrive")] = functions.region(REGION).runWith({
+  "memory": MEMORY,
+}).pubsub.schedule(SCHEDULE).timeZone(TZ).onRun(async () => {
   const uploadFolder = getUploadFolderId();
   const archiveFolder = getArchiveFolderId();
   const processedFolder = getProcessedFolderId();
